@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .admin-wrap { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; }
+    .admin-wrap h2 { margin-bottom: 1rem; }
+    .admin-nav { margin-bottom: 2rem; }
+    .admin-nav a { margin-right: 1rem; }
+    .form-section { background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+    .form-section label { display: block; margin: 0.5rem 0 0.2rem; font-weight: 500; }
+    .form-section input, .form-section textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.5rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); }
+    .form-section button { margin-top: 0.5rem; }
+    .list-items { list-style: none; }
+    .list-items li { padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .list-items li:last-child { border-bottom: 0; }
+    .list-items .del { background: #c62828; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    .list-items .del:hover { background: #b71c1c; }
+    .back-link { display: inline-block; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <a href="../index.html" class="back-link">← Retour au site</a>
+    <h1>Espace d'administration</h1>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Gestion des actualités, événements et message de la bannière. Les données sont enregistrées localement (navigateur). Pour un vrai stockage, branchez un backend.</p>
+
+    <nav class="admin-nav">
+      <a href="#notif">Bannière</a>
+      <a href="#actualites">Actualités</a>
+      <a href="#events">Événements</a>
+    </nav>
+
+    <div class="form-section" id="notif">
+      <h2>Message de la bannière (accueil)</h2>
+      <label>Texte affiché (HTML possible, ex. lien : &lt;a href="cultes.html"&gt;Voir&lt;/a&gt;)</label>
+      <input type="text" id="notif-input" placeholder="Prochain culte : dimanche 9h00. <a href='cultes.html'>Horaires</a>">
+      <button type="button" class="btn btn-primary" id="save-notif">Enregistrer</button>
+      <p id="notif-msg" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);"></p>
+    </div>
+
+    <div class="form-section" id="actualites">
+      <h2>Ajouter une actualité</h2>
+      <label>Titre</label>
+      <input type="text" id="act-titre" placeholder="Titre">
+      <label>Date ou court libellé (ex. Janvier 2026)</label>
+      <input type="text" id="act-date" placeholder="Janvier 2026">
+      <label>Contenu (texte ou HTML)</label>
+      <textarea id="act-contenu" rows="4" placeholder="Contenu de l'article"></textarea>
+      <button type="button" class="btn btn-primary" id="add-actu">Ajouter</button>
+      <h3 style="margin-top: 1.5rem;">Actualités enregistrées</h3>
+      <ul class="list-items" id="actu-list"></ul>
+    </div>
+
+    <div class="form-section" id="events">
+      <h2>Ajouter un événement</h2>
+      <label>Titre</label>
+      <input type="text" id="ev-titre" placeholder="Concert de louange">
+      <label>Date (ex. Dimanche 15 mars)</label>
+      <input type="text" id="ev-date" placeholder="Dimanche 15 mars">
+      <label>Description</label>
+      <textarea id="ev-desc" rows="3" placeholder="Description"></textarea>
+      <button type="button" class="btn btn-primary" id="add-ev">Ajouter</button>
+      <h3 style="margin-top: 1.5rem;">Événements enregistrés</h3>
+      <ul class="list-items" id="ev-list"></ul>
+    </div>
+  </div>
+  <script src="admin.js"></script>
+</body>
+</html>

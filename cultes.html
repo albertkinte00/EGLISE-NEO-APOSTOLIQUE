@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Horaires des cultes, programmes hebdomadaires et calendrier – Église Néo-Apostolique Brazzaville.">
+  <title>Cultes & Programmes – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html">Le Ministère</a>
+      <a href="cultes.html" class="active">Cultes & Programmes</a>
+      <a href="evenements.html">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Horaires des cultes</h2>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>Culte dominical</h3>
+            <p><strong>Dimanche, 9h00</strong></p>
+            <p>Enseignements, sacrements et communion. Cœur de notre vie communautaire.</p>
+            <img src="image/cte.jpg" alt="Culte dominical">
+          </div>
+          <div class="card reveal">
+            <h3>Réunions de prière</h3>
+            <p><strong>En semaine</strong></p>
+            <p>Moments de prière et de méditation pour approfondir la foi. Consultez les annonces pour les horaires.</p>
+            <img src="image/frere.jpg" alt="Prière">
+          </div>
+          <div class="card reveal">
+            <h3>Activités jeunesse</h3>
+            <p><strong>Selon programme</strong></p>
+            <p>Formation biblique, chorale et rencontres pour les jeunes. Voir la page <a href="evenements.html">Événements</a>.</p>
+            <img src="image/jeunesse.jpg" alt="Jeunesse">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--blue-pale); margin: 0 1rem; border-radius: var(--radius);">
+      <div class="container">
+        <h2 class="section-title">Programme hebdomadaire</h2>
+        <ul class="event-list">
+          <li>
+            <span class="event-date">Dim</span>
+            <span class="event-title">Culte dominical – 9h00</span>
+          </li>
+          <li>
+            <span class="event-date">Mer</span>
+            <span class="event-title">Réunion de prière – horaire communiqué</span>
+          </li>
+          <li>
+            <span class="event-date">Sam</span>
+            <span class="event-title">Préparation jeunesse / Chorale – selon calendrier</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Calendrier des événements</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Les fêtes et événements spéciaux (Noël, Pâques, fêtes de jeunesse, etc.) sont annoncés dans la rubrique <a href="actualites.html">Actualités</a> et <a href="evenements.html">Événements</a>.</p>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>Suivre le culte en ligne</h3>
+            <p>Vous ne pouvez pas vous déplacer ? Retrouvez nos cultes et méditations sur nos chaînes officielles.</p>
+            <a href="medias.html" class="btn btn-primary">Voir les Médias & Live</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <script src="script.js"></script>
+</body>
+</html>

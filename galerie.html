@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Galerie photos – Église Néo-Apostolique Brazzaville, par catégories.">
+  <title>Galerie – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html">Le Ministère</a>
+      <a href="cultes.html">Cultes & Programmes</a>
+      <a href="evenements.html">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="galerie.html" class="active">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Galerie</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Cliquez sur une photo pour l'agrandir.</p>
+
+        <div class="cat-filters" id="cat-filters">
+          <button type="button" class="active" data-cat="toutes">Toutes</button>
+          <button type="button" data-cat="cultes">Cultes</button>
+          <button type="button" data-cat="jeunesse">Jeunesse</button>
+          <button type="button" data-cat="chorale">Chorale & Concert</button>
+          <button type="button" data-cat="communaute">Communauté</button>
+        </div>
+
+        <div class="gallery" id="main-gallery">
+          <div class="gallery-item reveal" data-cat="cultes" data-src="image/cte.jpg">
+            <img src="image/cte.jpg" alt="Culte">
+            <span class="caption">Culte dominical</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="cultes" data-src="image/01-OR__2797-1536x1024.jpg">
+            <img src="image/01-OR__2797-1536x1024.jpg" alt="Assemblée">
+            <span class="caption">Assemblée</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="jeunesse" data-src="image/jeunesse.jpg">
+            <img src="image/jeunesse.jpg" alt="Jeunesse">
+            <span class="caption">Activité jeunesse</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="jeunesse" data-src="image/activite jeunesse.jpg">
+            <img src="image/activite jeunesse.jpg" alt="Jeunesse">
+            <span class="caption">Jeunesse</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="jeunesse" data-src="image/jeunes act.jpg">
+            <img src="image/jeunes act.jpg" alt="Jeunes">
+            <span class="caption">Jeunes en formation</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="chorale" data-src="image/chorale.jpg">
+            <img src="image/chorale.jpg" alt="Chorale">
+            <span class="caption">Chorale</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="chorale" data-src="image/choral.jpg">
+            <img src="image/choral.jpg" alt="Concert">
+            <span class="caption">Concert de louange</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="communaute" data-src="image/cmt.jpg">
+            <img src="image/cmt.jpg" alt="Communauté">
+            <span class="caption">Communauté</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="cultes" data-src="image/frere.jpg">
+            <img src="image/frere.jpg" alt="Prière">
+            <span class="caption">Réunion de prière</span>
+          </div>
+          <div class="gallery-item reveal" data-cat="communaute" data-src="image/activite.jpg">
+            <img src="image/activite.jpg" alt="Activité">
+            <span class="caption">Activité</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Voir l'image">
+    <img src="" alt="Agrandissement" id="lightbox-img">
+  </div>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <script src="script.js"></script>
+  <script>
+    (function() {
+      var filters = document.getElementById('cat-filters');
+      var gallery = document.getElementById('main-gallery');
+      var items = gallery ? gallery.querySelectorAll('.gallery-item') : [];
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lightbox-img');
+
+      if (filters) {
+        filters.querySelectorAll('button').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            filters.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            var cat = this.getAttribute('data-cat');
+            items.forEach(function(el) {
+              var c = el.getAttribute('data-cat');
+              el.style.display = (cat === 'toutes' || c === cat) ? '' : 'none';
+            });
+          });
+        });
+      }
+
+      items.forEach(function(el) {
+        el.addEventListener('click', function() {
+          var src = this.getAttribute('data-src') || this.querySelector('img').src;
+          if (lbImg) lbImg.src = src;
+          if (lb) lb.classList.add('open');
+        });
+      });
+      if (lb) {
+        lb.addEventListener('click', function() { this.classList.remove('open'); });
+        if (lbImg) lbImg.addEventListener('click', function(e) { e.stopPropagation(); });
+      }
+    })();
+  </script>
+</body>
+</html>

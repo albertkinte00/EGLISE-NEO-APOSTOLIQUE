@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Actualités et annonces – Église Néo-Apostolique Brazzaville.">
+  <title>Actualités – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html">Le Ministère</a>
+      <a href="cultes.html">Cultes & Programmes</a>
+      <a href="evenements.html">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html" class="active">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Actualités</h2>
+        <p style="text-align: center; margin-bottom: 2rem;">Articles et annonces importantes de la communauté.</p>
+
+        <div class="cards" id="actualites-list">
+          <!-- Rempli dynamiquement par enacRenderActualites + contenu par défaut ci-dessous -->
+          <article class="card reveal">
+            <h3>Bienvenue sur notre nouveau site</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Janvier 2026</p>
+            <p>Le site de l'Église Néo-Apostolique de Brazzaville a été rénové pour vous offrir un accès plus simple aux horaires des cultes, aux événements et aux médias. Restez connectés.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Horaires des cultes</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Rappel</p>
+            <p>Le culte dominical a lieu chaque dimanche à 9h00. Les réunions de prière en semaine sont annoncées localement et sur notre canal WhatsApp.</p>
+            <a href="cultes.html" class="btn btn-outline" style="margin-top: 0.5rem;">Voir les horaires</a>
+          </article>
+          <article class="card reveal">
+            <h3>Suivre les cultes en ligne</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Médias</p>
+            <p>Vous pouvez suivre nos cultes et reportages sur YouTube et Facebook. Liens dans la rubrique <a href="medias.html">Médias</a>.</p>
+            <a href="medias.html" class="btn btn-primary" style="margin-top: 0.5rem;">Chaînes officielles</a>
+          </article>
+        </div>
+
+        <p style="text-align: center; margin-top: 2rem; color: var(--text-muted);">Pour les annonces à la communauté (mariages, condoléances, etc.), contactez le bureau ou votre ministre.</p>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--blue-pale); margin: 0 1rem; border-radius: var(--radius);">
+      <div class="container">
+        <h2 class="section-title">Annonces importantes</h2>
+        <ul class="event-list">
+          <li>
+            <span class="event-date">Info</span>
+            <span>Prochains cultes et événements : consultez les annonces à l'église et sur WhatsApp.</span>
+          </li>
+          <li>
+            <span class="event-date">Contact</span>
+            <span>Pour toute demande pastorale ou administrative : <a href="contact.html">Nous contacter</a>.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <script src="script.js"></script>
+  <script>if (typeof enacRenderActualites === 'function') enacRenderActualites('actualites-list');</script>
+</body>
+</html>

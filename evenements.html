@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Événements – Galerie, vidéos et affiches de l'Église Néo-Apostolique Brazzaville.">
+  <title>Événements – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html">Le Ministère</a>
+      <a href="cultes.html">Cultes & Programmes</a>
+      <a href="evenements.html" class="active">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Événements à venir</h2>
+        <ul class="event-list" id="ev-admin-list" style="margin-bottom: 2rem;"></ul>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>Concert de louange</h3>
+            <p>Concert des chorales de l'Église – dates communiquées dans les annonces et sur nos réseaux.</p>
+            <img src="image/choral.jpg" alt="Concert de louange">
+            <div class="cta-group" style="justify-content: flex-start;">
+              <a href="medias.html" class="btn btn-gold">Voir les vidéos</a>
+            </div>
+          </div>
+          <div class="card reveal">
+            <h3>Fêtes et cultes spéciaux</h3>
+            <p>Noël, Pâques, fêtes de jeunesse et autres célébrations. Consultez les <a href="actualites.html">Actualités</a> pour les dates et lieux.</p>
+            <img src="image/activite jeunesse.jpg" alt="Activité">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--blue-pale); margin: 0 1rem; border-radius: var(--radius);">
+      <div class="container">
+        <h2 class="section-title">Galerie des événements</h2>
+        <div class="gallery" id="events-gallery">
+          <div class="gallery-item reveal" data-src="image/choral.jpg">
+            <img src="image/choral.jpg" alt="Concert">
+            <span class="caption">Concert de louange</span>
+          </div>
+          <div class="gallery-item reveal" data-src="image/chorale.jpg">
+            <img src="image/chorale.jpg" alt="Chorale">
+            <span class="caption">Chorale</span>
+          </div>
+          <div class="gallery-item reveal" data-src="image/jeunesse.jpg">
+            <img src="image/jeunesse.jpg" alt="Jeunesse">
+            <span class="caption">Activité jeunesse</span>
+          </div>
+          <div class="gallery-item reveal" data-src="image/activite jeunesse.jpg">
+            <img src="image/activite jeunesse.jpg" alt="Activité">
+            <span class="caption">Rencontre jeunesse</span>
+          </div>
+          <div class="gallery-item reveal" data-src="image/cte.jpg">
+            <img src="image/cte.jpg" alt="Culte">
+            <span class="caption">Culte</span>
+          </div>
+          <div class="gallery-item reveal" data-src="image/01-OR__2797-1536x1024.jpg">
+            <img src="image/01-OR__2797-1536x1024.jpg" alt="Assemblée">
+            <span class="caption">Assemblée</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Vidéos</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Retrouvez nos retransmissions et reportages sur nos chaînes officielles.</p>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>YouTube</h3>
+            <p>Sermons, concerts et reportages.</p>
+            <a href="https://www.youtube.com/@%C3%89glise_N%C3%A9o_Apostolique-242" target="_blank" rel="noopener" class="btn btn-primary">Chaîne YouTube</a>
+          </div>
+          <div class="card reveal">
+            <h3>Facebook</h3>
+            <p>Directs et actualités.</p>
+            <a href="https://www.facebook.com/people/%C3%89glise-N%C3%A9o-Apostolique-Au-Congo-Officielle/61578356690315/" target="_blank" rel="noopener" class="btn btn-primary">Page Facebook</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Affiches téléchargeables</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Les affiches des prochains événements sont partagées sur WhatsApp et les réseaux. Rejoignez nos canaux pour les recevoir.</p>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>WhatsApp</h3>
+            <p>Recevez annonces et affiches sur notre canal officiel.</p>
+            <a href="https://whatsapp.com/channel/0029Vb680nO5EjxzWvSgju3r" target="_blank" rel="noopener" class="btn btn-gold">Rejoindre le canal</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Voir l'image">
+    <img src="" alt="Agrandissement" id="lightbox-img">
+  </div>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <script src="script.js"></script>
+  <script>if (typeof enacRenderEvenements === 'function') enacRenderEvenements('ev-admin-list');</script>
+  <script>
+    (function() {
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lightbox-img');
+      document.querySelectorAll('#events-gallery .gallery-item').forEach(function(el) {
+        el.addEventListener('click', function() {
+          var src = this.getAttribute('data-src') || this.querySelector('img').src;
+          lbImg.src = src;
+          lb.classList.add('open');
+        });
+      });
+      if (lb) {
+        lb.addEventListener('click', function() { this.classList.remove('open'); });
+        lbImg.addEventListener('click', function(e) { e.stopPropagation(); });
+      }
+    })();
+  </script>
+</body>
+</html>

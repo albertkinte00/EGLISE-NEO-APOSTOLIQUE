@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Église Néo-Apostolique de Brazzaville – Congo. Cultes, événements, médias et actualités.">
+  <title>Accueil – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html" class="active">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html">Le Ministère</a>
+      <a href="cultes.html">Cultes & Programmes</a>
+      <a href="evenements.html">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- Bandeau notification événement -->
+    <div class="notif-banner" id="notif-banner">
+      <span id="notif-text">Prochain culte dominical : dimanche 9h00. <a href="cultes.html">Voir les horaires</a></span>
+    </div>
+
+    <!-- Slider hero -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="hero-slider" id="hero-slider">
+          <div class="slides">
+            <div class="slide" style="background-image: url('image/01-OR__2797-1536x1024.jpg');">
+              <span class="slide-caption">Culte et communion – Ensemble dans la foi</span>
+            </div>
+            <div class="slide" style="background-image: url('image/cte.jpg');">
+              <span class="slide-caption">Notre communauté à pointe noire</span>
+            </div>
+            <div class="slide" style="background-image: url('image/chorale.jpg');">
+              <span class="slide-caption">Louange et chorale</span>
+            </div>
+            <div class="slide" style="background-image: url('image/jeunesse.jpg');">
+              <span class="slide-caption">Jeunesse et activités</span>
+            </div>
+            <div class="slide" style="background-image: url('image/activite jeunesse.jpg');">
+              <span class="slide-caption">Formation et partage</span>
+            </div>
+          </div>
+          <div class="arrows">
+            <button type="button" id="slide-prev" aria-label="Image précédente">‹</button>
+            <button type="button" id="slide-next" aria-label="Image suivante">›</button>
+          </div>
+          <div class="dots" id="slide-dots"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Message biblique du jour -->
+    <section class="section">
+      <div class="container">
+        <div class="verse-box">
+          <div class="label">Message biblique du jour</div>
+          <blockquote id="verse-text">« Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance. »</blockquote>
+          <cite id="verse-ref">Jérémie 29, 11</cite>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mot de bienvenue + CTA -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Bienvenue</h2>
+        <p style="max-width: 720px; margin: 0 auto 1.5rem; text-align: center; font-size: 1.05rem;">
+          Bienvenue sur le site officiel de l'Église Néo-Apostolique de Brazzaville. Ici, vous découvrirez nos cultes, 
+          nos événements et notre mission au service du Seigneur et des familles du Congo. Que la paix et la bénédiction 
+          de Dieu soient avec vous.
+        </p>
+        <div class="cta-group">
+          <a href="cultes.html" class="btn btn-primary">Voir les cultes</a>
+          <a href="medias.html" class="btn btn-gold">Suivre en ligne</a>
+          <a href="contact.html" class="btn btn-outline">Nous contacter</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aperçu activités -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Nos activités</h2>
+        <div class="cards">
+          <div class="card reveal">
+            <h3>Culte dominical</h3>
+            <p>Participez à nos cultes chaque dimanche : enseignements, sacrements et communion fraternelle.</p>
+            <img src="image/cte.jpg" alt="Culte">
+          </div>
+          <div class="card reveal">
+            <h3>Jeunesse & Chorale</h3>
+            <p>Formation biblique, concerts et activités pour les jeunes et les familles.</p>
+            <img src="image/jeunesse.jpg" alt="Jeunesse">
+          </div>
+          <div class="card reveal">
+            <h3>Réunions de prière</h3>
+            <p>Renforcez votre foi à travers nos réunions de prière en semaine.</p>
+            <img src="image/frere.jpg" alt="Prière">
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+
+  <script src="script.js"></script>
+  <script>
+    (function() {
+      var slider = document.getElementById('hero-slider');
+      if (!slider) return;
+      var slides = slider.querySelector('.slides');
+      var list = slider.querySelectorAll('.slide');
+      var n = list.length;
+      var dotsWrap = document.getElementById('slide-dots');
+      var idx = 0;
+      var t;
+
+      for (var i = 0; i < n; i++) {
+        var d = document.createElement('span');
+        d.setAttribute('data-idx', i);
+        d.addEventListener('click', function() {
+          idx = parseInt(this.getAttribute('data-idx'), 10);
+          go();
+        });
+        dotsWrap.appendChild(d);
+      }
+
+      function go() {
+        if (!slides) return;
+        slides.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        var dots = dotsWrap.querySelectorAll('span');
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+      }
+
+      function next() {
+        idx = (idx + 1) % n;
+        go();
+      }
+
+      document.getElementById('slide-prev').addEventListener('click', function() {
+        idx = (idx - 1 + n) % n;
+        go();
+      });
+      document.getElementById('slide-next').addEventListener('click', next);
+      t = setInterval(next, 5000);
+      go();
+    })();
+  </script>
+</body>
+</html>

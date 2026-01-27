@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Le Ministère – Apôtres et ministres de l'Église Néo-Apostolique de Brazzaville.">
+  <title>Le Ministère – Église Néo-Apostolique Brazzaville</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
+    <h1>Église Néo-Apostolique</h1>
+    <p class="subtitle">Brazzaville – Congo</p>
+  </header>
+
+  <div class="nav-wrap">
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="eglise.html">À propos</a>
+      <a href="ministere.html" class="active">Le Ministère</a>
+      <a href="cultes.html">Cultes & Programmes</a>
+      <a href="evenements.html">Événements</a>
+      <a href="medias.html">Médias</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Le Ministère</h2>
+        <p style="text-align: center; max-width: 640px; margin: 0 auto 2.5rem;">Les apôtres et les ministres assurent la prédication, les sacrements et l'accompagnement pastoral de la communauté.</p>
+        <div class="cards">
+          <div class="card minister-card reveal">
+            <div class="photo-wrap">
+              <img src="image/cmt.jpg" alt="Apôtre / Ministre">
+            </div>
+            <span class="role">Apôtre de district</span>
+            <h3>Direction spirituelle</h3>
+            <p>Responsable de la coordination des communautés et de la dispensation des sacrements au niveau du district.</p>
+          </div>
+          <div class="card minister-card reveal">
+            <div class="photo-wrap">
+              <img src="image/cte.jpg" alt="Ministre">
+            </div>
+            <span class="role">Évêque / Prêtre</span>
+            <h3>Ministère pastoral</h3>
+            <p>Enseignement biblique, célébration des cultes et accompagnement des fidèles au quotidien.</p>
+          </div>
+          <div class="card minister-card reveal">
+            <div class="photo-wrap">
+              <img src="image/cmt.jpg" alt="Diacre">
+            </div>
+            <span class="role">Diacre</span>
+            <h3>Service et soutien</h3>
+            <p>Assistance lors des cultes, visites et soutien des familles et des personnes dans le besoin.</p>
+          </div>
+        </div>
+        <p style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.95rem;">Pour toute question sur le ministère ou une demande pastorale, n'hésitez pas à <a href="contact.html">nous contacter</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p class="admin-link"><a href="admin/index.html">Administration</a></p>
+  </footer>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <script src="script.js"></script>
+</body>
+</html>
