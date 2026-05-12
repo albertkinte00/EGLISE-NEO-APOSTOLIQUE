@@ -62,12 +62,12 @@
     var btn = document.getElementById('theme-toggle');
     if (btn) btn.textContent = isDark ? '☀️' : '🌓';
   }
-  try {
-    var saved = localStorage.getItem(themeKey);
-    if (saved === 'dark') applyTheme(true);
-    else if (saved === 'light') applyTheme(false);
-  } catch (e) {}
-  var themeBtn = document.getElementById('theme-toggle');
+        try {
+            var saved = localStorage.getItem(themeKey);
+            if (saved === 'dark') applyTheme(true);
+            else if (saved === 'light') applyTheme(false);
+          } catch (e) {}
+          var themeBtn = document.getElementById('theme-toggle');
   if (themeBtn) {
     themeBtn.addEventListener('click', function() {
       var isDark = root.getAttribute('data-theme') === 'dark';
@@ -77,13 +77,31 @@
     });
   }
 
-  // ----- Notification personnalisable (depuis admin) -----
+  // ----- Notification personnalisable (Supabase settings.html_notif) -----
   var notif = document.getElementById('notif-text');
   if (notif) {
-    try {
-      var msg = localStorage.getItem('enac-notif');
-      if (msg) notif.innerHTML = msg;
-    } catch (e) {}
+    (function loadNotifFromSupabase() {
+      try {
+        var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
+        var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
+        fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=update_at.desc&limit=1', {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (data && data[0] && data[0].html_notif) {
+            // Pure Supabase rendering: afficher tel quel (si contenu HTML autorisé côté DB)
+            notif.innerHTML = data[0].html_notif;
+          }
+        })
+        .catch(function(){});
+      } catch (e) {}
+    })();
   }
 })();
 
@@ -91,26 +109,52 @@
 function enacRenderActualites(containerId) {
   var el = document.getElementById(containerId);
   if (!el) return;
-  try {
-    var list = JSON.parse(localStorage.getItem('enac-actualites') || '[]');
-    if (list.length === 0) return;
-    var html = list.slice(0, 20).map(function(a) {
+
+  var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
+
+  fetch(SUPABASE_URL + '/rest/v1/actualites?select=id,titre,date,contenu,created_at&order=created_at.desc&limit=20', {
+    method: 'GET',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(list){
+    if (!list || list.length === 0) return;
+    var html = list.map(function(a) {
       return '<article class="card reveal"><h3>' + (a.titre || '') + '</h3><p style="color:var(--text-muted);font-size:0.9rem;">' + (a.date || '') + '</p><p>' + (a.contenu || '') + '</p></article>';
     }).join('');
-    el.insertAdjacentHTML('afterbegin', html);
-  } catch (e) {}
+    el.innerHTML = html;
+  })
+  .catch(function(){});
 }
 
 /** Charge et affiche les événements depuis localStorage (admin) */
 function enacRenderEvenements(containerId) {
   var el = document.getElementById(containerId);
   if (!el) return;
-  try {
-    var list = JSON.parse(localStorage.getItem('enac-evenements') || '[]');
-    if (list.length === 0) return;
-    var html = list.slice(0, 15).map(function(e) {
+
+  var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
+
+  fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date,desc,created_ad&order=created_ad.desc&limit=15', {
+    method: 'GET',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(list){
+    if (!list || list.length === 0) return;
+    var html = list.map(function(e) {
       return '<li><span class="event-date">' + (e.date || '') + '</span><span class="event-title">' + (e.titre || '') + '</span>' + (e.desc ? '<br><span style="font-size:0.9rem;">' + e.desc + '</span>' : '') + '</li>';
     }).join('');
-    el.insertAdjacentHTML('afterbegin', html);
-  } catch (e) {}
+    el.innerHTML = html;
+  })
+  .catch(function(){});
 }

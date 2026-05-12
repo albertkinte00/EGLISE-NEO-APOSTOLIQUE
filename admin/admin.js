@@ -1,6 +1,6 @@
 /**
  * Admin Église Néo-Apostolique – Accès réservé au(x) Gmail configuré(s) dans admin-config.js
- * Stockage : enac-notif, enac-actualites, enac-evenements (localStorage)
+ * Stockage : Supabase (tables settings, actualites, evenements)
  */
 (function() {
   'use strict';
@@ -105,15 +105,48 @@
       }
     }
 
+    var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
+
+    function sbHeaders() {
+      return {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      };
+    }
+
     var notifInput = document.getElementById('notif-input');
     var saveNotif = document.getElementById('save-notif');
     var notifMsg = document.getElementById('notif-msg');
+
+    function loadSettings() {
+      return fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=update_at.desc&limit=1', {
+        method: 'GET',
+        headers: sbHeaders()
+      }).then(function(r){ return r.json(); }).then(function(data){
+        if (data && data[0] && typeof data[0].html_notif !== 'undefined') {
+          if (notifInput) notifInput.value = data[0].html_notif || '';
+        }
+      });
+    }
+
     if (notifInput && saveNotif) {
-      notifInput.value = localStorage.getItem(NOTIF_KEY) || 'Prochain culte dominical : dimanche 9h00. <a href="cultes.html">Voir les horaires</a>';
+      loadSettings();
       saveNotif.addEventListener('click', function() {
-        var v = notifInput.value.trim();
-        localStorage.setItem(NOTIF_KEY, v || '');
-        if (notifMsg) notifMsg.textContent = 'Enregistré. Rechargez la page d\'accueil pour voir le changement.';
+        var v = (notifInput.value || '').trim();
+        // upsert : si id existe on update, sinon insert (on insère un row unique si ta table l’autorise)
+        fetch(SUPABASE_URL + '/rest/v1/settings', {
+          method: 'POST',
+          headers: Object.assign({}, sbHeaders(), {
+            'Prefer': 'return=representation'
+          }),
+          body: JSON.stringify([{ html_notif: v }])
+        })
+        .then(function(){
+          if (notifMsg) notifMsg.textContent = 'Enregistré. Rechargez la page d\'accueil pour voir le changement.';
+        })
+        .catch(function(){});
       });
     }
 
@@ -122,31 +155,49 @@
     var actuDate = document.getElementById('act-date');
     var actuContenu = document.getElementById('act-contenu');
     var addActu = document.getElementById('add-actu');
+
     function renderActu() {
-      var list = getJson(ACTU_KEY, []);
       if (!actuList) return;
-      actuList.innerHTML = list.length ? list.map(function(a, i) {
-        return '<li><span><strong>' + (a.titre || 'Sans titre') + '</strong> – ' + (a.date || '') + '</span><button type="button" class="del" data-i="' + i + '">Supprimer</button></li>';
-      }).join('') : '<li style="color:var(--text-muted);">Aucune actualité.</li>';
-      actuList.querySelectorAll('.del').forEach(function(b) {
-        b.addEventListener('click', function() {
-          var i = parseInt(b.getAttribute('data-i'), 10);
-          var arr = getJson(ACTU_KEY, []);
-          arr.splice(i, 1);
-          setJson(ACTU_KEY, arr);
-          renderActu();
+      fetch(SUPABASE_URL + '/rest/v1/actualites?select=id,titre,date&order=created_at.desc&limit=50', {
+        method: 'GET',
+        headers: sbHeaders()
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(list){
+        if (!list || list.length === 0) {
+          actuList.innerHTML = '<li style="color:var(--text-muted);">Aucune actualité.</li>';
+          return;
+        }
+        actuList.innerHTML = list.map(function(a) {
+          return '<li><span><strong>' + (a.titre || 'Sans titre') + '</strong> – ' + (a.date || '') + '</span><button type="button" class="del" data-id="' + a.id + '">Supprimer</button></li>';
+        }).join('');
+        actuList.querySelectorAll('.del').forEach(function(b) {
+          b.addEventListener('click', function() {
+            var id = b.getAttribute('data-id');
+            fetch(SUPABASE_URL + '/rest/v1/actualites?id=eq.' + encodeURIComponent(id), {
+              method: 'DELETE',
+              headers: sbHeaders(),
+            }).then(function(){ renderActu(); });
+          });
         });
-      });
+      })
+      .catch(function(){});
     }
+
     if (addActu && actuTitre && actuDate && actuContenu) {
       addActu.addEventListener('click', function() {
         var titre = actuTitre.value.trim();
         if (!titre) return;
-        var arr = getJson(ACTU_KEY, []);
-        arr.unshift({ titre: titre, date: actuDate.value.trim(), contenu: actuContenu.value.trim() });
-        setJson(ACTU_KEY, arr);
-        actuTitre.value = ''; actuDate.value = ''; actuContenu.value = '';
-        renderActu();
+        var date = (actuDate.value || '').trim();
+        var contenu = (actuContenu.value || '').trim();
+        fetch(SUPABASE_URL + '/rest/v1/actualites', {
+          method: 'POST',
+          headers: Object.assign({}, sbHeaders(), { 'Prefer': 'return=representation' }),
+          body: JSON.stringify([{ titre: titre, date: date, contenu: contenu }])
+        }).then(function(){
+          actuTitre.value = ''; actuDate.value = ''; actuContenu.value = '';
+          renderActu();
+        }).catch(function(){});
       });
     }
     renderActu();
@@ -156,31 +207,49 @@
     var evDate = document.getElementById('ev-date');
     var evDesc = document.getElementById('ev-desc');
     var addEv = document.getElementById('add-ev');
+
     function renderEv() {
-      var list = getJson(EV_KEY, []);
       if (!evList) return;
-      evList.innerHTML = list.length ? list.map(function(e, i) {
-        return '<li><span><strong>' + (e.titre || 'Sans titre') + '</strong> – ' + (e.date || '') + '</span><button type="button" class="del" data-i="' + i + '">Supprimer</button></li>';
-      }).join('') : '<li style="color:var(--text-muted);">Aucun événement.</li>';
-      evList.querySelectorAll('.del').forEach(function(b) {
-        b.addEventListener('click', function() {
-          var i = parseInt(b.getAttribute('data-i'), 10);
-          var arr = getJson(EV_KEY, []);
-          arr.splice(i, 1);
-          setJson(EV_KEY, arr);
-          renderEv();
+      fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date&order=created_ad.desc&limit=50', {
+        method: 'GET',
+        headers: sbHeaders()
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(list){
+        if (!list || list.length === 0) {
+          evList.innerHTML = '<li style="color:var(--text-muted);">Aucun événement.</li>';
+          return;
+        }
+        evList.innerHTML = list.map(function(e) {
+          return '<li><span><strong>' + (e.titre || 'Sans titre') + '</strong> – ' + (e.date || '') + '</span><button type="button" class="del" data-id="' + e.id + '">Supprimer</button></li>';
+        }).join('');
+        evList.querySelectorAll('.del').forEach(function(b) {
+          b.addEventListener('click', function() {
+            var id = b.getAttribute('data-id');
+            fetch(SUPABASE_URL + '/rest/v1/evenements?id=eq.' + encodeURIComponent(id), {
+              method: 'DELETE',
+              headers: sbHeaders(),
+            }).then(function(){ renderEv(); });
+          });
         });
-      });
+      })
+      .catch(function(){});
     }
+
     if (addEv && evTitre && evDate && evDesc) {
       addEv.addEventListener('click', function() {
         var titre = evTitre.value.trim();
         if (!titre) return;
-        var arr = getJson(EV_KEY, []);
-        arr.unshift({ titre: titre, date: evDate.value.trim(), desc: evDesc.value.trim() });
-        setJson(EV_KEY, arr);
-        evTitre.value = ''; evDate.value = ''; evDesc.value = '';
-        renderEv();
+        var date = (evDate.value || '').trim();
+        var desc = (evDesc.value || '').trim();
+        fetch(SUPABASE_URL + '/rest/v1/evenements', {
+          method: 'POST',
+          headers: Object.assign({}, sbHeaders(), { 'Prefer': 'return=representation' }),
+          body: JSON.stringify([{ titre: titre, date: date, desc: desc }])
+        }).then(function(){
+          evTitre.value = ''; evDate.value = ''; evDesc.value = '';
+          renderEv();
+        }).catch(function(){});
       });
     }
     renderEv();
