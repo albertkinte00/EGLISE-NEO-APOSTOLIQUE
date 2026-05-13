@@ -121,7 +121,7 @@
     var notifMsg = document.getElementById('notif-msg');
 
     function loadSettings() {
-      return fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=update_at.desc&limit=1', {
+      return fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=updated_at.desc&limit=1', {
         method: 'GET',
         headers: sbHeaders()
       }).then(function(r){ return r.json(); }).then(function(data){

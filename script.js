@@ -84,7 +84,7 @@
       try {
         var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
         var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
-        fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=update_at.desc&limit=1', {
+        fetch(SUPABASE_URL + '/rest/v1/settings?select=html_notif&order=updated_at.desc&limit=1', {
           method: 'GET',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
