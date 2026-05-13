@@ -210,7 +210,7 @@
 
     function renderEv() {
       if (!evList) return;
-      fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date&order=created_ad.desc&limit=50', {
+      fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date&order=created_at.desc&limit=50', {
         method: 'GET',
         headers: sbHeaders()
       })

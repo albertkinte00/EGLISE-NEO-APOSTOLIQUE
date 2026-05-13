@@ -140,7 +140,7 @@ function enacRenderEvenements(containerId) {
   var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
   var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
 
-  fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date,desc,created_ad&order=created_ad.desc&limit=15', {
+  fetch(SUPABASE_URL + '/rest/v1/evenements?select=id,titre,date,desc,created_at&order=created_at.desc&limit=15', {
     method: 'GET',
     headers: {
       'apikey': SUPABASE_ANON_KEY,

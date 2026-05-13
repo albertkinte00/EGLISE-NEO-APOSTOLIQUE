@@ -2,6 +2,6 @@
 - [x] Mettre à jour `cultes.html` (programme hebdomadaire complet)
 - [x] Mettre à jour `eglise.html` (Vision/Mission)
 - [x] Mettre à jour `evenements.html` (4 nouvelles rubriques)
-- [ ] Mettre à jour `ministere.html` (rubrique Ministère avec 5 apôtres : Jean-Luc Schneider, Arnaud Martig, Aldin Makoundi, Kitosukou, Massamba Evariste)
-- [ ] Mettre en commit/push les changements à `ministere.html`
+- [x] Mettre à jour `ministere.html` (rubrique Ministère avec 5 apôtres : Jean-Luc Schneider, Arnaud Martig, Aldin Makoundi, Kitosukou, Massamba Evariste)
+- [x] Mettre en commit/push les changements à `ministere.html`
 - [ ] Mettre à jour la Pull Request GitHub (ou en créer une nouvelle)
