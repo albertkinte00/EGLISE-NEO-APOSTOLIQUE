@@ -1,0 +1,144 @@
+<!-- Section admin pour gérer les communautés (à ajouter dans admin/index.html dans <nav class="admin-nav"> et après les autres sections) -->
+
+<div class="form-section" id="communautes">
+  <h2>Gérer les communautés</h2>
+  
+  <div style="margin-bottom: 2rem; padding: 1rem; background: var(--blue-pale); border-radius: var(--radius-sm); border-left: 4px solid var(--blue);">
+    <p style="margin: 0; font-size: 0.95rem;"><strong>Note:</strong> Pour créer/modifier les communautés, activez le panel ci-dessous. Les données sont stockées dans Supabase (tables: communautes, contacts_communaute, horaires_services, activites_communaute).</p>
+  </div>
+
+  <button type="button" class="btn btn-primary" id="toggle-comm-form" style="margin-bottom: 1rem;">➕ Ajouter une communauté</button>
+
+  <div id="comm-form" style="display: none; background: var(--bg); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 2rem; border: 2px dashed var(--blue);">
+    <h3>Nouvelle communauté</h3>
+    
+    <label>Nom de la communauté *</label>
+    <input type="text" id="comm-nom" placeholder="Ex: Communauté de Poto-Poto" required>
+
+    <label>District apostolique</label>
+    <input type="text" id="comm-district" placeholder="Ex: District de Kinshasa">
+
+    <label>Quartier</label>
+    <input type="text" id="comm-quartier" placeholder="Ex: Poto-Poto">
+
+    <label>Zone</label>
+    <input type="text" id="comm-zone" placeholder="Ex: Centre-ville">
+
+    <label>Responsable</label>
+    <input type="text" id="comm-responsable" placeholder="Nom du responsable">
+
+    <label>Latitude * (ex: -4.2634)</label>
+    <input type="number" id="comm-lat" step="0.0001" placeholder="-4.2634" required>
+
+    <label>Longitude * (ex: 15.2429)</label>
+    <input type="number" id="comm-lng" step="0.0001" placeholder="15.2429" required>
+
+    <label>Adresse</label>
+    <input type="text" id="comm-adresse" placeholder="Rue, numéro, etc.">
+
+    <label>Point de repère</label>
+    <input type="text" id="comm-repere" placeholder="Ex: À côté de l'école primaire">
+
+    <label>URL photo (optionnel)</label>
+    <input type="url" id="comm-photo" placeholder="https://...">
+
+    <label>Description</label>
+    <textarea id="comm-desc" rows="3" placeholder="Informations supplémentaires..."></textarea>
+
+    <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+      <button type="button" class="btn btn-primary" id="save-comm">Créer</button>
+      <button type="button" class="btn btn-secondary" id="cancel-comm">Annuler</button>
+    </div>
+  </div>
+
+  <h3>Communautés enregistrées</h3>
+  <ul class="list-items" id="comm-list"></ul>
+</div>
+
+<!-- Section contacts -->
+<div class="form-section" id="contacts-gestion">
+  <h2>Gérer les contacts</h2>
+  <p style="color: var(--text-muted); margin-bottom: 1rem;">Ajouter téléphones, emails, WhatsApp pour les communautés</p>
+
+  <label>Sélectionner une communauté</label>
+  <select id="contact-comm-select" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); margin-bottom: 1rem;">
+    <option value="">-- Choisir une communauté --</option>
+  </select>
+
+  <label>Type de contact</label>
+  <select id="contact-type" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); margin-bottom: 1rem;">
+    <option value="telephone">Téléphone</option>
+    <option value="email">Email</option>
+    <option value="whatsapp">WhatsApp</option>
+  </select>
+
+  <label>Valeur</label>
+  <input type="text" id="contact-valeur" placeholder="Ex: +242 06 123 45 67">
+
+  <label>
+    <input type="checkbox" id="contact-primary"> Principal ?
+  </label>
+
+  <button type="button" class="btn btn-primary" id="add-contact" style="margin-top: 0.5rem;">Ajouter contact</button>
+
+  <p id="contact-msg" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);"></p>
+</div>
+
+<!-- Section horaires -->
+<div class="form-section" id="horaires-gestion">
+  <h2>Gérer les horaires de services</h2>
+  <p style="color: var(--text-muted); margin-bottom: 1rem;">Définir les jours et heures de cultes/réunions</p>
+
+  <label>Sélectionner une communauté</label>
+  <select id="horaire-comm-select" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); margin-bottom: 1rem;">
+    <option value="">-- Choisir une communauté --</option>
+  </select>
+
+  <label>Jour</label>
+  <input type="text" id="horaire-jour" placeholder="Ex: Dimanche">
+
+  <label>Heure début (HH:MM)</label>
+  <input type="time" id="horaire-debut">
+
+  <label>Heure fin (HH:MM)</label>
+  <input type="time" id="horaire-fin">
+
+  <label>Type de service</label>
+  <select id="horaire-type" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); margin-bottom: 1rem;">
+    <option value="culte">Culte</option>
+    <option value="reunion">Réunion</option>
+    <option value="etude">Étude biblique</option>
+    <option value="priere">Prière</option>
+  </select>
+
+  <button type="button" class="btn btn-primary" id="add-horaire" style="margin-top: 0.5rem;">Ajouter horaire</button>
+
+  <p id="horaire-msg" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);"></p>
+</div>
+
+<!-- Section activités -->
+<div class="form-section" id="activites-gestion">
+  <h2>Gérer les activités</h2>
+  <p style="color: var(--text-muted); margin-bottom: 1rem;">Ajouter les jours d'activités (jeunesse, prière, etc.)</p>
+
+  <label>Sélectionner une communauté</label>
+  <select id="activite-comm-select" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); margin-bottom: 1rem;">
+    <option value="">-- Choisir une communauté --</option>
+  </select>
+
+  <label>Jour</label>
+  <input type="text" id="activite-jour" placeholder="Ex: Lundi">
+
+  <label>Heure</label>
+  <input type="time" id="activite-heure">
+
+  <label>Activité</label>
+  <input type="text" id="activite-nom" placeholder="Ex: Réunion jeunesse">
+
+  <label>Description (optionnel)</label>
+  <input type="text" id="activite-desc" placeholder="Détails...">
+
+  <button type="button" class="btn btn-primary" id="add-activite" style="margin-top: 0.5rem;">Ajouter activité</button>
+
+  <p id="activite-msg" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);"></p>
+</div>
