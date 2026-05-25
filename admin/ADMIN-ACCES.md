@@ -1,46 +1,40 @@
-# Accès à l’administration (réservé à votre Gmail)
+# Acces a l'administration
 
-Seul le compte Gmail que vous indiquez dans la configuration peut se connecter à l’admin.
+Le nouveau panneau `admin/index.html` gere deux niveaux :
 
-## Étapes
+- `admin` : contenu quotidien (annonces, actualites, evenements, medias, communautes)
+- `superadmin` : tout le contenu + reglages globaux du site
 
-### 1. Ouvrir la configuration
+## Configuration
 
-Ouvrez le fichier **admin-config.js** (à la racine du dossier `admin/`).
-
-### 2. Mettre votre adresse Gmail
-
-Remplacez `votremail@gmail.com` par votre vraie adresse Gmail :
+Editez `admin/admin-config.js` puis renseignez :
 
 ```js
-window.ADMIN_ALLOWED_EMAIL = 'votre.vrai@gmail.com';
+window.ENAC_SUPABASE_URL = 'https://votre-projet.supabase.co';
+window.ENAC_SUPABASE_ANON_KEY = 'votre_cle_publishable_supabase';
+
+window.ADMIN_USERS = [
+  { email: 'superadmin@example.com', role: 'superadmin', name: 'Super Admin' },
+  { email: 'admin@example.com', role: 'admin', name: 'Equipe Communication' }
+];
+
+window.ADMIN_GOOGLE_CLIENT_ID = 'VOTRE_CLIENT_ID.apps.googleusercontent.com';
 ```
 
-### 3. Créer un « Client ID » Google
+## Google Sign-In
 
-1. Allez sur [Google Cloud Console](https://console.cloud.google.com/).
-2. Créez un projet ou choisissez-en un.
-3. Menu **APIs & Services** → **Credentials** → **Create Credentials** → **OAuth client ID**.
-4. Type : **Web application**.
-5. **Authorized JavaScript origins** : l’URL de votre site  
-   - En local : `http://localhost` ou `http://127.0.0.1`  
-   - En ligne : `https://votredomaine.com` (sans slash final).
-6. Créez et copiez le **Client ID** (ex. `123456-xxxx.apps.googleusercontent.com`).
+1. Ouvrir Google Cloud Console
+2. Creer ou choisir un projet
+3. Aller dans `APIs & Services > Credentials`
+4. Creer un `OAuth client ID`
+5. Type : `Web application`
+6. Ajouter vos origines JavaScript autorisees :
+   - `http://localhost`
+   - `http://127.0.0.1`
+   - votre domaine de production
 
-### 4. Coller le Client ID dans admin-config.js
+## Important
 
-```js
-window.ADMIN_GOOGLE_CLIENT_ID = '123456-xxxx.apps.googleusercontent.com';
-```
+Le role `admin` ou `superadmin` est defini dans `ADMIN_USERS`.
 
-Enregistrez le fichier. Désormais, en ouvrant la page **admin/index.html**, vous verrez « Connexion administration » et le bouton **Se connecter avec Google**. Seul le Gmail défini dans `ADMIN_ALLOWED_EMAIL` pourra accéder au contenu.
-
-Pour autoriser **plusieurs** Gmail, vous pouvez utiliser dans `admin-config.js` :
-
-```js
-window.ADMIN_ALLOWED_EMAILS = ['admin1@gmail.com', 'admin2@gmail.com'];
-```
-
-(et ne pas définir `ADMIN_ALLOWED_EMAIL`).
-
-**Déconnexion** : utiliser le bouton « Se déconnecter » en haut à droite de l’admin. La session expire après 12 heures.
+Pour une securite forte cote base, il faut ensuite aligner les politiques RLS Supabase avec votre methode d'authentification. Dans cette version, l'interface est prete, mais le controle final des ecritures depend de vos politiques Supabase.

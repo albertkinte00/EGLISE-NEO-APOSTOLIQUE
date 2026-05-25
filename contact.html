@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Contact – Formulaire, localisation et coordonnées de l'Église Néo-Apostolique Brazzaville.">
-  <title>Contact – Église Néo-Apostolique Brazzaville</title>
+  <meta name="description" content="Contact - Formulaire, localisation et coordonnees de l'Eglise Neo-Apostolique Brazzaville.">
+  <title>Contact - Eglise Neo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
-    <img src="image/Nak_logo.svg.png" alt="Logo Église Néo-Apostolique" class="logo-img">
-    <h1>Église Néo-Apostolique</h1>
-    <p class="subtitle">Brazzaville – Congo</p>
+    <img src="image/Nak_logo.svg.png" alt="Logo Eglise Neo-Apostolique" class="logo-img">
+    <h1>Eglise Neo-Apostolique</h1>
+    <p class="subtitle">Brazzaville - Congo</p>
   </header>
 
   <div class="nav-wrap">
-    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">☰</button>
+    <button class="nav-toggle" type="button" aria-label="Ouvrir le menu">Menu</button>
     <nav class="nav">
       <a href="index.html">Accueil</a>
-      <a href="eglise.html">À propos</a>
-      <a href="ministere.html">Le Ministère</a>
+      <a href="eglise.html">A propos</a>
+      <a href="ministere.html">Le Ministere</a>
       <a href="cultes.html">Cultes & Programmes</a>
-      <a href="evenements.html">Événements</a>
-      <a href="medias.html">Médias</a>
-      <a href="actualites.html">Actualités</a>
+      <a href="evenements.html">Evenements</a>
+      <a href="medias.html">Medias</a>
+      <a href="actualites.html">Actualites</a>
       <a href="galerie.html">Galerie</a>
-      <a href="communautes.html">Communautés</a>
+      <a href="communautes.html">Communautes</a>
       <a href="contact.html" class="active">Contact</a>
     </nav>
   </div>
@@ -37,15 +37,15 @@
         <div class="cards">
           <div class="card reveal">
             <h3>Email</h3>
-            <p><a href="mailto:bureau.enacongo@gmail.com">bureau.enacongo@gmail.com</a></p>
+            <p><a id="contact-email-link" href="mailto:bureau.enacongo@gmail.com"><span id="contact-email-text">bureau.enacongo@gmail.com</span></a></p>
           </div>
           <div class="card reveal">
-            <h3>Téléphone</h3>
-            <p><a href="tel:+242062008557">+242 06 200 8557</a></p>
+            <h3>Telephone</h3>
+            <p><a id="contact-phone-link" href="tel:+242062008557"><span id="contact-phone-text">+242 06 200 8557</span></a></p>
           </div>
           <div class="card reveal">
             <h3>Adresse</h3>
-            <p>Brazzaville, République du Congo</p>
+            <p id="contact-address-text">Brazzaville, Republique du Congo</p>
           </div>
         </div>
       </div>
@@ -55,9 +55,9 @@
       <div class="container">
         <h2 class="section-title">Localisation</h2>
         <div class="map-wrap">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.673628726071!2d15.276414314753!3d-4.263379697012244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a32f2b3b3b3b3%3A0x1a6a32f2b3b3b3b3!2sBrazzaville%2C%20Republic%20of%20the%20Congo!5e0!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte – Brazzaville"></iframe>
+          <iframe id="contact-map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.673628726071!2d15.276414314753!3d-4.263379697012244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a32f2b3b3b3b3%3A0x1a6a32f2b3b3b3b3!2sBrazzaville%2C%20Republic%20of%20the%20Congo!5e0!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte - Brazzaville"></iframe>
         </div>
-        <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">Brazzaville, Congo. Pour l’adresse exacte du lieu de culte, contactez-nous par email ou téléphone.</p>
+        <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">Pour l'adresse exacte du lieu de culte, contactez-nous par email ou telephone.</p>
       </div>
     </section>
 
@@ -90,15 +90,15 @@
   </main>
 
   <footer class="site-footer">
-    <p>&copy; 2026 Église Néo-Apostolique – Brazzaville (Congo)</p>
+    <p>&copy; 2026 Eglise Neo-Apostolique - Brazzaville (Congo)</p>
     <p class="admin-link"><a href="admin/index.html">Administration</a></p>
   </footer>
-  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de theme">Dark</button>
   <script src="script.js"></script>
   <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      alert('Merci pour votre message. Nous vous répondrons dans les meilleurs délais.');
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      alert('Merci pour votre message. Cette version du formulaire affiche une confirmation locale. Branchez ensuite un email service ou Supabase Edge Function pour recevoir les messages.');
       this.reset();
     });
   </script>

@@ -64,7 +64,7 @@
     <section class="section" style="background: var(--blue-pale); margin: 0 1rem; border-radius: var(--radius);">
       <div class="container">
         <h2 class="section-title">Annonces importantes</h2>
-        <ul class="event-list">
+        <ul class="event-list" id="annonces-list">
           <li>
             <span class="event-date">Info</span>
             <span>Prochains cultes et événements : consultez les annonces à l'église et sur WhatsApp.</span>
@@ -85,5 +85,6 @@
   <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
   <script src="script.js"></script>
   <script>if (typeof enacRenderActualites === 'function') enacRenderActualites('actualites-list');</script>
+  <script>if (typeof enacRenderAnnonces === 'function') enacRenderAnnonces('annonces-list');</script>
 </body>
 </html>

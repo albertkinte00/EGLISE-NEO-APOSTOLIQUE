@@ -3,89 +3,650 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administration – Église Néo-Apostolique Brazzaville</title>
+  <title>Administration - Eglise Neo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="../style.css">
   <style>
-    .admin-wrap { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; }
-    .admin-wrap h2 { margin-bottom: 1rem; }
-    .admin-nav { margin-bottom: 2rem; }
-    .admin-nav a { margin-right: 1rem; }
-    .form-section { background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; box-shadow: var(--shadow); }
-    .form-section label { display: block; margin: 0.5rem 0 0.2rem; font-weight: 500; }
-    .form-section input, .form-section textarea { width: 100%; padding: 0.6rem; margin-bottom: 0.5rem; border-radius: var(--radius-sm); border: 1px solid rgba(21,101,192,.2); }
-    .form-section button { margin-top: 0.5rem; }
-    .list-items { list-style: none; }
-    .list-items li { padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-    .list-items li:last-child { border-bottom: 0; }
-    .list-items .del { background: #c62828; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .list-items .del:hover { background: #b71c1c; }
-    .back-link { display: inline-block; margin-bottom: 1rem; }
-    #admin-login { max-width: 420px; margin: 4rem auto; padding: 2rem; background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
-    #admin-login h2 { margin-bottom: 0.5rem; }
-    #admin-login p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
-    #google-btn { display: flex; justify-content: center; margin: 1rem 0; min-height: 44px; }
-    #admin-login .msg { margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted); }
-    #admin-login .error { color: #c62828; }
-    .admin-header-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .btn-logout { padding: 0.4rem 0.8rem; font-size: 0.9rem; background: rgba(0,0,0,.08); color: var(--text); border: 1px solid rgba(0,0,0,.12); border-radius: var(--radius-sm); cursor: pointer; }
-    .btn-logout:hover { background: rgba(0,0,0,.12); }
+    body { background: linear-gradient(180deg, #f3f7fb 0%, #eef2f6 100%); }
+    .admin-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .admin-sidebar {
+      background: linear-gradient(180deg, #082b4a 0%, #0a3d6b 100%);
+      color: #fff;
+      padding: 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .admin-brand { margin-bottom: 1.5rem; }
+    .admin-brand h1 { color: #fff; font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .admin-brand p { color: rgba(255,255,255,0.8); margin: 0; font-size: 0.95rem; }
+    .role-badge {
+      display: inline-block;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 0.75rem;
+    }
+    .admin-menu { display: grid; gap: 0.5rem; margin-top: 1.5rem; }
+    .admin-menu button {
+      border: 0;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      text-align: left;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font: inherit;
+    }
+    .admin-menu button:hover,
+    .admin-menu button.active {
+      background: rgba(255,255,255,0.18);
+      transform: translateX(4px);
+    }
+    .admin-main { padding: 2rem; }
+    .admin-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .admin-topbar h2 { margin: 0 0 0.4rem; }
+    .admin-topbar p { margin: 0; color: var(--text-muted); }
+    .admin-topbar-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .admin-email {
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.6rem 1rem;
+      box-shadow: var(--shadow);
+      font-size: 0.92rem;
+    }
+    .admin-grid { display: grid; gap: 1.25rem; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .stat-card strong { display: block; font-size: 1.8rem; color: var(--blue-dark); }
+    .stat-card span { color: var(--text-muted); font-size: 0.92rem; }
+    .panel {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 1.4rem;
+    }
+    .panel h3 { margin-bottom: 0.35rem; }
+    .panel p.helper { color: var(--text-muted); font-size: 0.94rem; margin-bottom: 1.1rem; }
+    .section-screen { display: none; }
+    .section-screen.active { display: block; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .field { display: grid; gap: 0.35rem; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-weight: 600; font-size: 0.95rem; }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid rgba(21, 101, 192, 0.2);
+      border-radius: 12px;
+      font: inherit;
+      background: #fff;
+    }
+    .field textarea { min-height: 110px; resize: vertical; }
+    .inline-check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 100%;
+      padding-top: 1.7rem;
+    }
+    .actions-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-muted {
+      background: transparent;
+      color: var(--blue-dark);
+      border: 1px solid rgba(10, 61, 107, 0.2);
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .list-table { display: grid; gap: 0.8rem; margin-top: 1.2rem; }
+    .list-item {
+      border: 1px solid rgba(21, 101, 192, 0.12);
+      border-radius: 16px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      background: #fbfdff;
+    }
+    .list-item strong { display: block; margin-bottom: 0.3rem; }
+    .list-item p { margin: 0; color: var(--text-muted); }
+    .list-item .meta { font-size: 0.9rem; }
+    .list-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-small {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.6rem 0.85rem;
+      cursor: pointer;
+      font: inherit;
+    }
+    .btn-edit { background: rgba(21, 101, 192, 0.12); color: var(--blue-dark); }
+    .btn-delete { background: rgba(198, 40, 40, 0.12); color: #a51f1f; }
+    .message-bar {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      display: none;
+      font-size: 0.95rem;
+    }
+    .message-bar.show { display: block; }
+    .message-bar.success { background: #e8f5e9; color: #1b5e20; }
+    .message-bar.error { background: #ffebee; color: #b71c1c; }
+    .login-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #0a3d6b 0%, #0d47a1 100%);
+    }
+    .login-card {
+      width: min(460px, 100%);
+      background: #fff;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .login-card h2 { margin-bottom: 0.5rem; }
+    .login-card p { color: var(--text-muted); }
+    .hidden-by-role { display: none !important; }
+    @media (max-width: 980px) {
+      .admin-shell { grid-template-columns: 1fr; }
+      .admin-sidebar { position: static; height: auto; }
+    }
   </style>
 </head>
 <body>
-  <div id="admin-login" style="display: none;">
-    <h2>Connexion administration</h2>
-    <p>Seul le compte Gmail autorisé peut accéder à cet espace.</p>
-    <div id="google-btn"></div>
-    <p id="login-msg" class="msg"></p>
-    <p><a href="../index.html">← Retour au site</a></p>
+  <div id="admin-login" class="login-shell" style="display:none;">
+    <div class="login-card">
+      <h2>Connexion administration</h2>
+      <p>Connectez-vous avec un compte autorise pour modifier le site en temps reel.</p>
+      <div id="google-btn" style="display:flex; justify-content:center; margin:1rem 0; min-height:44px;"></div>
+      <p id="login-msg"></p>
+      <p><a href="../index.html">Retour au site</a></p>
+    </div>
   </div>
 
-  <div id="admin-content" class="admin-wrap" style="display: none;">
-    <div class="admin-header-row">
-      <a href="../index.html" class="back-link">← Retour au site</a>
-      <button type="button" class="btn-logout" id="admin-logout">Se déconnecter</button>
-    </div>
-    <h1>Espace d'administration</h1>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Gestion des actualités, événements et message de la bannière. Les données sont enregistrées localement (navigateur).</p>
+  <div id="admin-content" style="display:none;">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">
+          <h1>Console ENA Congo</h1>
+          <p>Administration des contenus du site</p>
+          <span class="role-badge" id="role-badge">Admin</span>
+        </div>
+        <nav class="admin-menu" id="admin-menu">
+          <button type="button" class="active" data-section="dashboard">Tableau de bord</button>
+          <button type="button" data-section="settings" data-role="superadmin">Parametres globaux</button>
+          <button type="button" data-section="annonces">Annonces</button>
+          <button type="button" data-section="actualites">Actualites</button>
+          <button type="button" data-section="evenements">Evenements</button>
+          <button type="button" data-section="medias">Medias</button>
+          <button type="button" data-section="communautes">Communautes</button>
+          <button type="button" data-section="details-communautes">Contacts et horaires</button>
+        </nav>
+      </aside>
 
-    <nav class="admin-nav">
-      <a href="#notif">Bannière</a>
-      <a href="#actualites">Actualités</a>
-      <a href="#events">Événements</a>
-    </nav>
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <h2>Gestion du site</h2>
+            <p>Chaque enregistrement publie directement son contenu sur le site public des qu'il est sauvegarde.</p>
+          </div>
+          <div class="admin-topbar-actions">
+            <div class="admin-email" id="admin-user-email"></div>
+            <button type="button" class="btn-muted" id="admin-logout">Se deconnecter</button>
+          </div>
+        </div>
 
-    <div class="form-section" id="notif">
-      <h2>Message de la bannière (accueil)</h2>
-      <label>Texte affiché (HTML possible, ex. lien : &lt;a href="cultes.html"&gt;Voir&lt;/a&gt;)</label>
-      <input type="text" id="notif-input" placeholder="Prochain culte : dimanche 9h00. <a href='cultes.html'>Horaires</a>">
-      <button type="button" class="btn btn-primary" id="save-notif">Enregistrer</button>
-      <p id="notif-msg" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);"></p>
-    </div>
+        <div class="admin-grid">
+          <section class="section-screen active" id="screen-dashboard">
+            <div class="stats-grid" id="dashboard-stats"></div>
+            <div class="panel" style="margin-top:1rem;">
+              <h3>Organisation conseillee</h3>
+              <p class="helper">Les administrateurs gerent le contenu quotidien. Le superadmin gere aussi les reglages globaux du site comme la banniere, les liens sociaux et les coordonnees generales.</p>
+            </div>
+          </section>
 
-    <div class="form-section" id="actualites">
-      <h2>Ajouter une actualité</h2>
-      <label>Titre</label>
-      <input type="text" id="act-titre" placeholder="Titre">
-      <label>Date ou court libellé (ex. Janvier 2026)</label>
-      <input type="text" id="act-date" placeholder="Janvier 2026">
-      <label>Contenu (texte ou HTML)</label>
-      <textarea id="act-contenu" rows="4" placeholder="Contenu de l'article"></textarea>
-      <button type="button" class="btn btn-primary" id="add-actu">Ajouter</button>
-      <h3 style="margin-top: 1.5rem;">Actualités enregistrées</h3>
-      <ul class="list-items" id="actu-list"></ul>
-    </div>
+          <section class="section-screen" id="screen-settings" data-role="superadmin">
+            <div class="panel">
+              <h3>Parametres globaux du site</h3>
+              <p class="helper">Cette section pilote la banniere d'accueil, le verset du jour, les liens medias et les coordonnees du site.</p>
+              <form id="settings-form">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="settings-notification-html">Banniere d'accueil (HTML autorise)</label>
+                    <textarea id="settings-notification-html"></textarea>
+                  </div>
+                  <div class="field full">
+                    <label for="settings-home-welcome-text">Texte de bienvenue accueil</label>
+                    <textarea id="settings-home-welcome-text"></textarea>
+                  </div>
+                  <div class="field full">
+                    <label for="settings-home-verse-text">Verset du jour</label>
+                    <textarea id="settings-home-verse-text"></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="settings-home-verse-ref">Reference du verset</label>
+                    <input type="text" id="settings-home-verse-ref">
+                  </div>
+                  <div class="field">
+                    <label for="settings-contact-email">Email principal</label>
+                    <input type="email" id="settings-contact-email">
+                  </div>
+                  <div class="field">
+                    <label for="settings-contact-phone">Telephone principal</label>
+                    <input type="text" id="settings-contact-phone">
+                  </div>
+                  <div class="field">
+                    <label for="settings-contact-address">Adresse publique</label>
+                    <input type="text" id="settings-contact-address">
+                  </div>
+                  <div class="field full">
+                    <label for="settings-contact-map">URL d'integration Google Maps</label>
+                    <input type="url" id="settings-contact-map">
+                  </div>
+                  <div class="field">
+                    <label for="settings-youtube">Lien YouTube</label>
+                    <input type="url" id="settings-youtube">
+                  </div>
+                  <div class="field">
+                    <label for="settings-facebook">Lien Facebook</label>
+                    <input type="url" id="settings-facebook">
+                  </div>
+                  <div class="field">
+                    <label for="settings-whatsapp">Lien WhatsApp</label>
+                    <input type="url" id="settings-whatsapp">
+                  </div>
+                  <div class="field">
+                    <label for="settings-nac">Lien nac.today</label>
+                    <input type="url" id="settings-nac">
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer les parametres</button>
+                </div>
+              </form>
+              <div class="message-bar" id="settings-message"></div>
+            </div>
+          </section>
 
-    <div class="form-section" id="events">
-      <h2>Ajouter un événement</h2>
-      <label>Titre</label>
-      <input type="text" id="ev-titre" placeholder="Concert de louange">
-      <label>Date (ex. Dimanche 15 mars)</label>
-      <input type="text" id="ev-date" placeholder="Dimanche 15 mars">
-      <label>Description</label>
-      <textarea id="ev-desc" rows="3" placeholder="Description"></textarea>
-      <button type="button" class="btn btn-primary" id="add-ev">Ajouter</button>
-      <h3 style="margin-top: 1.5rem;">Événements enregistrés</h3>
-      <ul class="list-items" id="ev-list"></ul>
+          <section class="section-screen" id="screen-annonces">
+            <div class="panel">
+              <h3>Annonces</h3>
+              <p class="helper">Les annonces s'affichent dans la rubrique actualites et servent pour les messages courts et urgents.</p>
+              <form id="annonces-form">
+                <input type="hidden" id="annonces-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="annonces-badge">Badge</label>
+                    <input type="text" id="annonces-badge" placeholder="Info">
+                  </div>
+                  <div class="field">
+                    <label for="annonces-titre">Titre</label>
+                    <input type="text" id="annonces-titre" required>
+                  </div>
+                  <div class="field full">
+                    <label for="annonces-message">Message</label>
+                    <textarea id="annonces-message" required></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="annonces-link-url">Lien</label>
+                    <input type="url" id="annonces-link-url">
+                  </div>
+                  <div class="field">
+                    <label for="annonces-link-label">Libelle du lien</label>
+                    <input type="text" id="annonces-link-label">
+                  </div>
+                  <div class="field">
+                    <label for="annonces-sort-order">Ordre</label>
+                    <input type="number" id="annonces-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="annonces-is-published" checked>
+                    <label for="annonces-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="annonces-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="annonces-message-bar"></div>
+              <div class="list-table" id="annonces-list"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-actualites">
+            <div class="panel">
+              <h3>Actualites</h3>
+              <p class="helper">Articles, communiques et informations longues publies sur la page actualites.</p>
+              <form id="actualites-form">
+                <input type="hidden" id="actualites-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="actualites-titre">Titre</label>
+                    <input type="text" id="actualites-titre" required>
+                  </div>
+                  <div class="field">
+                    <label for="actualites-date">Date ou libelle</label>
+                    <input type="text" id="actualites-date" placeholder="Mai 2026">
+                  </div>
+                  <div class="field full">
+                    <label for="actualites-contenu">Contenu</label>
+                    <textarea id="actualites-contenu" required></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="actualites-link-url">Lien</label>
+                    <input type="url" id="actualites-link-url">
+                  </div>
+                  <div class="field">
+                    <label for="actualites-link-label">Texte du bouton</label>
+                    <input type="text" id="actualites-link-label">
+                  </div>
+                  <div class="field">
+                    <label for="actualites-sort-order">Ordre</label>
+                    <input type="number" id="actualites-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="actualites-is-published" checked>
+                    <label for="actualites-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="actualites-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="actualites-message-bar"></div>
+              <div class="list-table" id="actualites-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-evenements">
+            <div class="panel">
+              <h3>Evenements</h3>
+              <p class="helper">Les evenements alimentent automatiquement la liste des evenements a venir du site.</p>
+              <form id="evenements-form">
+                <input type="hidden" id="evenements-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="evenements-titre">Titre</label>
+                    <input type="text" id="evenements-titre" required>
+                  </div>
+                  <div class="field">
+                    <label for="evenements-date">Date</label>
+                    <input type="text" id="evenements-date" placeholder="Dimanche 15 juin">
+                  </div>
+                  <div class="field">
+                    <label for="evenements-location">Lieu</label>
+                    <input type="text" id="evenements-location">
+                  </div>
+                  <div class="field full">
+                    <label for="evenements-desc">Description</label>
+                    <textarea id="evenements-desc"></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="evenements-image-url">Image (optionnelle)</label>
+                    <input type="url" id="evenements-image-url">
+                  </div>
+                  <div class="field">
+                    <label for="evenements-sort-order">Ordre</label>
+                    <input type="number" id="evenements-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="evenements-is-published" checked>
+                    <label for="evenements-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="evenements-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="evenements-message-bar"></div>
+              <div class="list-table" id="evenements-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-medias">
+            <div class="panel">
+              <h3>Medias</h3>
+              <p class="helper">Ajoutez ici les liens de replays, videos, playlists et autres contenus a afficher dans la page medias.</p>
+              <form id="medias-form">
+                <input type="hidden" id="medias-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="medias-titre">Titre</label>
+                    <input type="text" id="medias-titre" required>
+                  </div>
+                  <div class="field">
+                    <label for="medias-categorie">Categorie</label>
+                    <input type="text" id="medias-categorie" placeholder="Replay, Audio, Direct">
+                  </div>
+                  <div class="field full">
+                    <label for="medias-description">Description</label>
+                    <textarea id="medias-description"></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="medias-url">Lien</label>
+                    <input type="url" id="medias-url">
+                  </div>
+                  <div class="field">
+                    <label for="medias-link-label">Texte du bouton</label>
+                    <input type="text" id="medias-link-label" placeholder="Ouvrir">
+                  </div>
+                  <div class="field">
+                    <label for="medias-sort-order">Ordre</label>
+                    <input type="number" id="medias-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="medias-is-featured">
+                    <label for="medias-is-featured">Mettre en avant</label>
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="medias-is-published" checked>
+                    <label for="medias-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="medias-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="medias-message-bar"></div>
+              <div class="list-table" id="medias-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-communautes">
+            <div class="panel">
+              <h3>Communautes</h3>
+              <p class="helper">Creez ou modifiez les communautes qui alimentent la carte publique et la recherche geographique.</p>
+              <form id="communautes-form">
+                <input type="hidden" id="communautes-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="communautes-nom">Nom</label>
+                    <input type="text" id="communautes-nom" required>
+                  </div>
+                  <div class="field">
+                    <label for="communautes-district">District apostolique</label>
+                    <input type="text" id="communautes-district">
+                  </div>
+                  <div class="field">
+                    <label for="communautes-quartier">Quartier</label>
+                    <input type="text" id="communautes-quartier">
+                  </div>
+                  <div class="field">
+                    <label for="communautes-zone">Zone</label>
+                    <input type="text" id="communautes-zone">
+                  </div>
+                  <div class="field">
+                    <label for="communautes-responsable">Responsable</label>
+                    <input type="text" id="communautes-responsable">
+                  </div>
+                  <div class="field">
+                    <label for="communautes-latitude">Latitude</label>
+                    <input type="number" step="0.000001" id="communautes-latitude" required>
+                  </div>
+                  <div class="field">
+                    <label for="communautes-longitude">Longitude</label>
+                    <input type="number" step="0.000001" id="communautes-longitude" required>
+                  </div>
+                  <div class="field full">
+                    <label for="communautes-adresse">Adresse</label>
+                    <input type="text" id="communautes-adresse">
+                  </div>
+                  <div class="field full">
+                    <label for="communautes-point-repere">Point de repere</label>
+                    <input type="text" id="communautes-point-repere">
+                  </div>
+                  <div class="field full">
+                    <label for="communautes-description">Description</label>
+                    <textarea id="communautes-description"></textarea>
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="communautes-active" checked>
+                    <label for="communautes-active">Active</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="communautes-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="communautes-message-bar"></div>
+              <div class="list-table" id="communautes-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-details-communautes">
+            <div class="panel">
+              <h3>Contacts, horaires et activites</h3>
+              <p class="helper">Ajoutez les informations detaillees a une communaute deja creee.</p>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="relations-communaute-id">Communaute cible</label>
+                  <select id="relations-communaute-id"></select>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="panel">
+                  <h3>Contact</h3>
+                  <form id="contacts-form">
+                    <div class="field">
+                      <label for="contacts-type">Type</label>
+                      <select id="contacts-type">
+                        <option value="telephone">Telephone</option>
+                        <option value="email">Email</option>
+                        <option value="whatsapp">WhatsApp</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="contacts-valeur">Valeur</label>
+                      <input type="text" id="contacts-valeur" required>
+                    </div>
+                    <div class="inline-check">
+                      <input type="checkbox" id="contacts-is-primary">
+                      <label for="contacts-is-primary">Principal</label>
+                    </div>
+                    <div class="actions-row">
+                      <button type="submit" class="btn btn-primary">Ajouter contact</button>
+                    </div>
+                  </form>
+                  <div class="list-table" id="contacts-list-admin"></div>
+                </div>
+                <div class="panel">
+                  <h3>Horaire</h3>
+                  <form id="horaires-form">
+                    <div class="field">
+                      <label for="horaires-jour">Jour</label>
+                      <input type="text" id="horaires-jour" required>
+                    </div>
+                    <div class="field">
+                      <label for="horaires-debut">Heure debut</label>
+                      <input type="time" id="horaires-debut" required>
+                    </div>
+                    <div class="field">
+                      <label for="horaires-fin">Heure fin</label>
+                      <input type="time" id="horaires-fin" required>
+                    </div>
+                    <div class="field">
+                      <label for="horaires-type">Type</label>
+                      <select id="horaires-type">
+                        <option value="culte">Culte</option>
+                        <option value="reunion">Reunion</option>
+                        <option value="etude">Etude biblique</option>
+                        <option value="priere">Priere</option>
+                      </select>
+                    </div>
+                    <div class="actions-row">
+                      <button type="submit" class="btn btn-primary">Ajouter horaire</button>
+                    </div>
+                  </form>
+                  <div class="list-table" id="horaires-list-admin"></div>
+                </div>
+                <div class="panel">
+                  <h3>Activite</h3>
+                  <form id="activites-form">
+                    <div class="field">
+                      <label for="activites-jour">Jour</label>
+                      <input type="text" id="activites-jour" required>
+                    </div>
+                    <div class="field">
+                      <label for="activites-heure">Heure</label>
+                      <input type="time" id="activites-heure" required>
+                    </div>
+                    <div class="field">
+                      <label for="activites-nom">Activite</label>
+                      <input type="text" id="activites-nom" required>
+                    </div>
+                    <div class="field">
+                      <label for="activites-description">Description</label>
+                      <input type="text" id="activites-description">
+                    </div>
+                    <div class="actions-row">
+                      <button type="submit" class="btn btn-primary">Ajouter activite</button>
+                    </div>
+                  </form>
+                  <div class="list-table" id="activites-list-admin"></div>
+                </div>
+              </div>
+              <div class="message-bar" id="relations-message-bar"></div>
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
   </div>
 
