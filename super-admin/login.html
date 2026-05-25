@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Super Admin – Église Néo-Apostolique</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #202734;
+      --muted: #6b7280;
+      --primary: #1565c0;
+      --danger: #d32f2f;
+      --border: rgba(22, 67, 121, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, rgba(21,101,192,0.12), transparent 35%), var(--bg);
+      color: var(--text);
+    }
+
+    .login-shell {
+      width: min(540px, calc(100% - 2rem));
+      padding: 2rem;
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.9rem;
+    }
+
+    .login-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #273444;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      background: #fff;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(21,101,192,0.08);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border: none;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: #0f4d98;
+      transform: translateY(-1px);
+    }
+
+    .login-footer {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .message {
+      min-height: 1.5rem;
+      font-size: 0.95rem;
+      margin-top: 0.75rem;
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .message.success {
+      color: #166534;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-header">
+      <h1>Connexion Super Admin</h1>
+      <p>Accès réservé au responsable principal. Authentification sécurisée par rôle et session.</p>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="votre@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="Mot de passe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="secret">Clé secrète</label>
+        <input type="password" id="secret" placeholder="Clé secrète supplémentaire" required>
+      </div>
+
+      <button type="submit" class="btn-primary">Se connecter</button>
+      <div id="login-message" class="message"></div>
+    </form>
+
+    <div class="login-footer">
+      <a href="../index.html">← Retour à l'accueil</a>
+      <button type="button" id="forgot-password" style="border:none;background:none;color:var(--primary);cursor:pointer;padding:0;">Mot de passe oublié ?</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
+    var config = window.SUPER_ADMIN_CONFIG || {};
+    var AUTH_CONFIG = config.AUTH || {};
+    var SUPER_ADMIN_EMAIL = (AUTH_CONFIG.SUPER_ADMIN_EMAIL || '').toLowerCase();
+    var SUPER_ADMIN_PASSWORD = AUTH_CONFIG.SUPER_ADMIN_PASSWORD || 'Admin@123';
+    var SUPER_ADMIN_SECRET = AUTH_CONFIG.SECRET_KEY || 'super_secret_key_123';
+    var SESSION_TIMEOUT = (AUTH_CONFIG.SESSION_TIMEOUT_MINUTES || 30) * 60 * 1000;
+
+    function decodeJwt(token) {
+      try {
+        var payload = token.split('.')[1];
+        payload = payload.replace(/-/g, '+').replace(/_/g, '/');
+        var json = decodeURIComponent(atob(payload).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(json);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function showMessage(message, isError) {
+      var el = document.getElementById('login-message');
+      el.textContent = message;
+      el.className = 'message' + (isError ? ' error' : ' success');
+    }
+
+    function saveSession(email, token, role) {
+      sessionStorage.setItem('super_admin_email', email);
+      sessionStorage.setItem('super_admin_token', token);
+      sessionStorage.setItem('super_admin_role', role);
+      sessionStorage.setItem('super_admin_until', String(Date.now() + SESSION_TIMEOUT));
+    }
+
+    function getRoleFromToken(token) {
+      var payload = decodeJwt(token);
+      if (!payload) return null;
+      return payload.user_metadata?.role || payload.role || null;
+    }
+
+    async function requestPasswordReset(email) {
+      var response = await fetch(SUPABASE_URL + '/auth/v1/recovery', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      if (!response.ok) {
+        var error = await response.json();
+        throw new Error(error?.error_description || error?.message || 'Impossible d’envoyer l’email');
+      }
+    }
+
+    async function signInWithSupabase(email, password) {
+      var response = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({ email: email, password: password })
+      });
+
+      var data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error_description || data?.error || 'Identifiants incorrects');
+      }
+      return data;
+    }
+
+    function authorizeSuperAdmin(email, token, secret) {
+      if (email.toLowerCase() !== SUPER_ADMIN_EMAIL) {
+        throw new Error('Email non autorisé pour le Super Admin');
+      }
+      if (secret !== SUPER_ADMIN_SECRET) {
+        throw new Error('Clé secrète invalide');
+      }
+
+      var role = getRoleFromToken(token);
+      if (role && role !== 'super_admin') {
+        throw new Error('Compte connecté sans rôle Super Admin');
+      }
+
+      return 'super_admin';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      showMessage('Connexion en cours...', false);
+
+      var email = document.getElementById('email').value.trim().toLowerCase();
+      var password = document.getElementById('password').value;
+      var secret = document.getElementById('secret').value;
+
+      if (!email || !password || !secret) {
+        showMessage('Veuillez remplir tous les champs.', true);
+        return;
+      }
+
+      try {
+        var token = null;
+        var role = 'super_admin';
+
+        if (SUPER_ADMIN_PASSWORD && password === SUPER_ADMIN_PASSWORD) {
+          token = 'local_super_admin_session_' + Date.now();
+        } else {
+          var authData = await signInWithSupabase(email, password);
+          token = authData.access_token;
+        }
+
+        role = authorizeSuperAdmin(email, token, secret);
+        saveSession(email, token, role);
+        window.location.href = 'index.html';
+      } catch (error) {
+        showMessage(error.message || 'Erreur de connexion', true);
+      }
+    });
+
+    document.getElementById('forgot-password').addEventListener('click', async function() {
+      var email = document.getElementById('email').value.trim();
+      if (!email) {
+        showMessage('Entrez votre adresse email avant de réinitialiser le mot de passe.', true);
+        return;
+      }
+      try {
+        await requestPasswordReset(email);
+        showMessage('Email de réinitialisation envoyé. Vérifiez votre boîte de réception.', false);
+      } catch (error) {
+        showMessage(error.message, true);
+      }
+    });
+  </script>
+</body>
+</html>

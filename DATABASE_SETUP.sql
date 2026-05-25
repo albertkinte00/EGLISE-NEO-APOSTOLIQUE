@@ -107,11 +107,123 @@ CREATE POLICY "Public read activites" ON activites_communaute
 
 -- ====================================================
 -- DONNÉES DE TEST (optionnel)
--- Décommenter pour ajouter des données de test
--- ====================================================
+
+-- =========================
+-- 1. Table des utilisateurs
+-- =========================
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  email TEXT UNIQUE NOT NULL,
+  nom TEXT,
+  mot_de_passe TEXT, -- (ou géré par Supabase Auth)
+  role TEXT NOT NULL CHECK (role IN ('admin', 'super_admin')),
+  actif BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =========================
+-- 2. Table des événements
+-- =========================
+CREATE TABLE IF NOT EXISTS events (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  titre TEXT NOT NULL,
+  description TEXT,
+  date DATE NOT NULL,
+  heure TIME,
+  lieu TEXT,
+  communaute_id BIGINT REFERENCES communautes(id) ON DELETE SET NULL,
+  image_url TEXT,
+  cree_par BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  statut TEXT DEFAULT 'publie' CHECK (statut IN ('brouillon', 'publie', 'archive')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_events_communaute ON events(communaute_id);
+
+-- =========================
+-- 3. Table des médias
+-- =========================
+CREATE TABLE IF NOT EXISTS medias (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  titre TEXT,
+  description TEXT,
+  type TEXT NOT NULL CHECK (type IN ('image', 'video', 'audio', 'document')),
+  url TEXT NOT NULL,
+  communaute_id BIGINT REFERENCES communautes(id) ON DELETE SET NULL,
+  event_id BIGINT REFERENCES events(id) ON DELETE SET NULL,
+  cree_par BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  statut TEXT DEFAULT 'publie' CHECK (statut IN ('brouillon', 'publie', 'archive')),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_medias_communaute ON medias(communaute_id);
+
+-- =========================
+-- 4. Table des actualités/annonces
+-- =========================
+CREATE TABLE IF NOT EXISTS news (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  titre TEXT NOT NULL,
+  contenu TEXT NOT NULL,
+  image_url TEXT,
+  communaute_id BIGINT REFERENCES communautes(id) ON DELETE SET NULL,
+  cree_par BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  statut TEXT DEFAULT 'publie' CHECK (statut IN ('brouillon', 'publie', 'archive')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_news_communaute ON news(communaute_id);
+
+-- =========================
+-- 5. Table des signalements (reports)
+-- =========================
+CREATE TABLE IF NOT EXISTS signalements (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  type_objet TEXT NOT NULL CHECK (type_objet IN ('event', 'media', 'news', 'communaute')),
+  objet_id BIGINT NOT NULL,
+  user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  motif TEXT NOT NULL,
+  statut TEXT DEFAULT 'en_attente' CHECK (statut IN ('en_attente', 'traite', 'rejete')),
+  commentaire_admin TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  traite_par BIGINT REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- =========================
+-- 6. Table des notifications
+-- =========================
+CREATE TABLE IF NOT EXISTS notifications (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,
+  contenu TEXT NOT NULL,
+  lu BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+
+-- =========================
+-- 7. Table de l’historique des actions
+-- =========================
+CREATE TABLE IF NOT EXISTS historique_actions (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  cible_type TEXT NOT NULL,
+  cible_id BIGINT,
+  details JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =========================
+-- 8. (Optionnel) Table des statistiques (ou vues matérialisées)
+-- =========================
+-- À créer selon besoins spécifiques (ex : vues pour nb membres, nb événements, etc.)
 
 /*
--- Communauté 1
 INSERT INTO communautes (nom, district_apostolique, quartier, zone, latitude, longitude, responsable, adresse, point_repere, description, active)
 VALUES (
   'Communauté de Poto-Poto',

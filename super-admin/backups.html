@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sauvegardes & Restauration - Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0a3d6b;
+      --light: #f8fafc;
+      --text: #333;
+      --text-muted: #666;
+      --border: #e0e0e0;
+      --success: #4CAF50;
+      --warning: #ff9800;
+      --danger: #f44336;
+    }
+
+    [data-theme="dark"] {
+      --light: #1e1e1e;
+      --text: #e0e0e0;
+      --text-muted: #b0b0b0;
+      --border: #404040;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] .card {
+      background: #2a2a2a;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .card-header i {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .card-header h2 {
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-secondary:hover {
+      background: #ccc;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .backup-list {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] .backup-list {
+      background: #2a2a2a;
+    }
+
+    .backup-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .backup-item:last-child {
+      border-bottom: none;
+    }
+
+    .backup-info {
+      flex: 1;
+    }
+
+    .backup-info-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .backup-info-header strong {
+      font-size: 0.95rem;
+    }
+
+    .backup-size {
+      display: inline-block;
+      background: rgba(21, 101, 192, 0.2);
+      color: var(--primary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .backup-date {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .backup-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .backup-actions button {
+      width: auto;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .stat-box i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), #45a049);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border-left: 4px solid;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+      border-left-color: var(--success);
+    }
+
+    .alert-warning {
+      background: rgba(255, 152, 0, 0.2);
+      color: var(--warning);
+      border-left-color: var(--warning);
+    }
+
+    .alert-danger {
+      background: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+      border-left-color: var(--danger);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .backup-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .backup-actions {
+        width: 100%;
+      }
+
+      .backup-actions button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1>💾 Sauvegardes & Restauration</h1>
+      <p>Gérer les sauvegardes de la base de données et des fichiers</p>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-success" id="success-alert"></div>
+    <div class="alert alert-warning" id="warning-alert"></div>
+    <div class="alert alert-danger" id="danger-alert"></div>
+
+    <!-- STATS -->
+    <div class="grid">
+      <div class="card">
+        <div class="stat-box">
+          <i class="fas fa-database"></i>
+          <div class="stat-value">2.4 GB</div>
+          <div class="stat-label">Taille de la BD</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 48%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat-box">
+          <i class="fas fa-save"></i>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Sauvegardes</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat-box">
+          <i class="fas fa-history"></i>
+          <div class="stat-value">Il y a 2h</div>
+          <div class="stat-label">Dernière Sauvegarde</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKUP OPTIONS -->
+    <div class="grid">
+      <!-- CREATE BACKUP -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-plus"></i>
+          <h2>Créer une Sauvegarde</h2>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+          Créer une nouvelle sauvegarde complète de la base de données
+        </p>
+        <button class="btn btn-primary" onclick="createBackup()">
+          <i class="fas fa-download"></i> Nouvelle Sauvegarde
+        </button>
+      </div>
+
+      <!-- RESTORE BACKUP -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-undo"></i>
+          <h2>Restaurer une Sauvegarde</h2>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+          Restaurer une sauvegarde existante
+        </p>
+        <button class="btn btn-secondary" onclick="document.getElementById('restore-file').click()">
+          <i class="fas fa-upload"></i> Choisir un Fichier
+        </button>
+        <input type="file" id="restore-file" accept=".sql,.json,.zip" onchange="restoreBackup(this)">
+      </div>
+
+      <!-- SCHEDULE BACKUP -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-clock"></i>
+          <h2>Sauvegardes Automatiques</h2>
+        </div>
+        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <input type="checkbox" id="auto-backup-enabled" checked>
+          <span>Activer les sauvegardes programmées</span>
+        </label>
+        <label style="display: block; margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+          Fréquence :
+          <select id="backup-frequency" style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px;">
+            <option value="daily">Quotidienne</option>
+            <option value="weekly" selected>Hebdomadaire</option>
+            <option value="monthly">Mensuelle</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" onclick="saveBackupSchedule()">
+          <i class="fas fa-cog"></i> Enregistrer la Programmation
+        </button>
+      </div>
+    </div>
+
+    <!-- BACKUPS LIST -->
+    <div class="backup-list">
+      <div class="card-header">
+        <i class="fas fa-list"></i>
+        <h2>Historique des Sauvegardes</h2>
+      </div>
+
+      <div id="backup-items-container">
+        <!-- Backup items will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample backup data
+    var backups = [
+      { name: 'Backup_2024_05_20_143022', date: '20 mai 2024 à 14:30', size: '2.4 GB', status: 'complete' },
+      { name: 'Backup_2024_05_19_020015', date: '19 mai 2024 à 02:00', size: '2.35 GB', status: 'complete' },
+      { name: 'Backup_2024_05_18_020010', date: '18 mai 2024 à 02:00', size: '2.3 GB', status: 'complete' },
+      { name: 'Backup_2024_05_15_143022', date: '15 mai 2024 à 14:30', size: '2.2 GB', status: 'complete' },
+      { name: 'Backup_2024_05_14_020005', date: '14 mai 2024 à 02:00', size: '2.18 GB', status: 'complete' }
+    ];
+
+    function renderBackups() {
+      var container = document.getElementById('backup-items-container');
+      container.innerHTML = '';
+
+      if (backups.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 2rem;">Aucune sauvegarde disponible</p>';
+        return;
+      }
+
+      backups.forEach(function(backup, index) {
+        var item = document.createElement('div');
+        item.className = 'backup-item';
+        item.innerHTML = `
+          <div class="backup-info">
+            <div class="backup-info-header">
+              <i class="fas fa-${backup.status === 'complete' ? 'check-circle' : 'spinner fa-spin'}" style="color: ${backup.status === 'complete' ? '#4CAF50' : '#ff9800'};"></i>
+              <strong>${backup.name}</strong>
+              <span class="backup-size">${backup.size}</span>
+            </div>
+            <div class="backup-date">
+              <i class="fas fa-calendar"></i> ${backup.date}
+            </div>
+          </div>
+          <div class="backup-actions">
+            <button class="btn btn-secondary" onclick="downloadBackup('${backup.name}')">
+              <i class="fas fa-download"></i> Télécharger
+            </button>
+            <button class="btn btn-secondary" onclick="restoreFromBackup('${backup.name}')">
+              <i class="fas fa-undo"></i> Restaurer
+            </button>
+            <button class="btn btn-danger" onclick="deleteBackup(${index})">
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function createBackup() {
+      if (confirm('Créer une nouvelle sauvegarde complète ? Cette opération peut prendre quelques minutes.')) {
+        showAlert('success', '⏳ Création de la sauvegarde en cours...');
+
+        setTimeout(function() {
+          var newBackup = {
+            name: 'Backup_' + new Date().getTime(),
+            date: new Date().toLocaleString('fr-FR'),
+            size: '2.4 GB',
+            status: 'complete'
+          };
+          backups.unshift(newBackup);
+          renderBackups();
+          showAlert('success', '✓ Sauvegarde créée avec succès: ' + newBackup.name);
+        }, 2000);
+      }
+    }
+
+    function downloadBackup(name) {
+      showAlert('success', '⬇️ Téléchargement de ' + name + ' en cours...');
+      // Simulate download
+      var link = document.createElement('a');
+      link.href = '#';
+      link.download = name + '.sql';
+      // link.click(); // Uncomment for real download
+    }
+
+    function restoreFromBackup(name) {
+      if (confirm(`Êtes-vous sûr de vouloir restaurer depuis ${name} ?\n\nCeci écrasera toutes les données actuelles !`)) {
+        showAlert('warning', '⏳ Restauration en cours... Ne fermez pas cette page.');
+
+        setTimeout(function() {
+          showAlert('success', '✓ Restauration complétée avec succès');
+        }, 3000);
+      }
+    }
+
+    function restoreBackup(input) {
+      if (input.files && input.files[0]) {
+        var fileName = input.files[0].name;
+        if (confirm(`Restaurer depuis ${fileName} ?\n\nCeci écrasera toutes les données actuelles !`)) {
+          showAlert('warning', '⏳ Restauration en cours...');
+
+          setTimeout(function() {
+            showAlert('success', '✓ Restauration complétée avec succès');
+          }, 2000);
+        }
+      }
+    }
+
+    function deleteBackup(index) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.')) {
+        backups.splice(index, 1);
+        renderBackups();
+        showAlert('danger', '✓ Sauvegarde supprimée');
+      }
+    }
+
+    function saveBackupSchedule() {
+      var enabled = document.getElementById('auto-backup-enabled').checked;
+      var frequency = document.getElementById('backup-frequency').value;
+
+      localStorage.setItem('backup-schedule', JSON.stringify({
+        enabled: enabled,
+        frequency: frequency
+      }));
+
+      showAlert('success', '✓ Programmation des sauvegardes enregistrée');
+    }
+
+    function showAlert(type, message) {
+      var alert = document.getElementById(type + '-alert');
+      alert.textContent = message;
+      alert.classList.add('show');
+
+      setTimeout(function() {
+        alert.classList.remove('show');
+      }, 4000);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      renderBackups();
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,12 @@
 /**
- * Configuration accès admin – S  eul ce(s) Gmail peut/peuvent se connecter.
- * Voir admin-config.example.js pour les instructions (Client ID Google, etc.)
+ * Configuration de l'accès administration
+ * Seuls les comptes autorisés et les sessions valides peuvent accéder à l'espace admin.
  */
-window.ADMIN_ALLOWED_EMAIL = 'albertkintsodiza@gmail.com';
-window.ADMIN_GOOGLE_CLIENT_ID = '794837147806-5eqnrj82pu4darqpngcrkrfr7sgo43f5.apps.googleusercontent.com';// Collez ici votre Client ID (voir admin-config.example.js)
+window.ADMIN_CONFIG = {
+  ALLOWED_EMAILS: ['albertkintsodiza@gmail.com'],
+  ACCESS_CODE: 'neo-admin-secret',
+  USE_SUPABASE_AUTH: false,
+  SESSION_TIMEOUT_MINUTES: 12,
+  SUPABASE_URL: 'https://soejilvldrainmblqnex.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8'
+};

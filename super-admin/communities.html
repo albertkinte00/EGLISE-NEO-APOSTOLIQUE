@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Communautés - Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0a3d6b;
+      --accent: #c9a227;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --light: #f8fafc;
+      --dark: #2c3e50;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #333;
+      --text-secondary: #666;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: var(--bg-secondary);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-inactive {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .btn-sm-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-sm-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .pagination button.active,
+    .pagination button:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-danger {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1><i class="fas fa-map-marker-alt"></i> Gestion des Communautés</h1>
+      <p>Gérer toutes les communautés et églises de l'application</p>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-success" id="success-alert"></div>
+    <div class="alert alert-danger" id="error-alert"></div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="🔍 Rechercher une communauté..."
+        >
+      </div>
+      <button class="btn btn-primary" id="btn-add-community">
+        <i class="fas fa-plus"></i> Nouvelle Communauté
+      </button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-responsive">
+      <table id="communities-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Ville</th>
+            <th>Pasteur</th>
+            <th>Membres</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Données chargées dynamiquement -->
+        </tbody>
+      </table>
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <i class="fas fa-inbox"></i>
+        <h3>Aucune communauté trouvée</h3>
+        <p>Créez votre première communauté en cliquant sur "Nouvelle Communauté"</p>
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- MODAL: Add/Edit Community -->
+  <div class="modal" id="community-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Ajouter une Communauté</h2>
+      </div>
+      <form id="community-form">
+        <div class="form-group">
+          <label for="name">Nom *</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="city">Ville *</label>
+          <input type="text" id="city" name="city" required>
+        </div>
+
+        <div class="form-group">
+          <label for="pastor">Pasteur</label>
+          <input type="text" id="pastor" name="pastor">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn" style="background: #999; color: white;" onclick="document.getElementById('community-modal').classList.remove('show')">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="supabase-client-adapted.js"></script>
+  <script>
+    'use strict';
+
+    // Check authentication
+    var adminEmail = sessionStorage.getItem('super_admin_email');
+    var adminToken = sessionStorage.getItem('super_admin_token');
+    if (!adminEmail || !adminToken) {
+      window.location.href = 'login.html';
+    }
+
+    // Data - Chargé depuis Supabase
+    var communities = [];
+    var allCommunities = [];
+
+    var currentPage = 1;
+    var itemsPerPage = 10;
+    var filteredCommunities = [];
+    var editingId = null;
+
+    const form = document.getElementById('community-form');
+    const modal = document.getElementById('community-modal');
+    const searchInput = document.getElementById('search-input');
+    const btnAdd = document.getElementById('btn-add-community');
+    const tableBody = document.getElementById('table-body');
+    const emptyState = document.getElementById('empty-state');
+    const pagination = document.getElementById('pagination');
+
+    // Event Listeners
+    btnAdd.addEventListener('click', openAddModal);
+    searchInput.addEventListener('keyup', applyFilters);
+    form.addEventListener('submit', saveCommunity);
+
+    // Load communities on page load
+    window.addEventListener('load', function() {
+      console.log('⏳ Chargement des communautés depuis Supabase...');
+      loadCommunitiesFromSupabase();
+    });
+
+    /**
+     * Charge les communautés depuis Supabase
+     */
+    function loadCommunitiesFromSupabase() {
+      supabase.getCommunities()
+        .then(function(data) {
+          console.log('✅ Communautés chargées:', data);
+          allCommunities = data || [];
+          communities = [...allCommunities];
+          filteredCommunities = [...allCommunities];
+          renderTable();
+        })
+        .catch(function(error) {
+          console.error('❌ Erreur chargement:', error);
+          showError('Erreur lors du chargement des communautés: ' + error.message);
+        });
+    }
+
+    function renderTable() {
+      if (filteredCommunities.length === 0) {
+        tableBody.innerHTML = '';
+        emptyState.style.display = 'block';
+        pagination.innerHTML = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const paginated = filteredCommunities.slice(start, end);
+
+      tableBody.innerHTML = paginated.map(c => `
+        <tr>
+          <td><strong>${escapeHtml(c.nom || '')}</strong></td>
+          <td>${escapeHtml(c.quartier || 'N/A')}</td>
+          <td>${escapeHtml(c.responsable || 'N/A')}</td>
+          <td>${c.contacts_count || '-'}</td>
+          <td>
+            <span class="status-badge status-${c.active ? 'active' : 'inactive'}">
+              ${c.active ? '✓ Actif' : '✗ Inactif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-sm-success" onclick="editCommunity(${c.id})">
+                <i class="fas fa-edit"></i> Modifier
+              </button>
+              <button class="btn btn-sm btn-sm-danger" onclick="deleteCommunity(${c.id})">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredCommunities.length / itemsPerPage);
+      let html = '';
+
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<button ${i === currentPage ? 'class="active"' : ''} onclick="goToPage(${i})">${i}</button>`;
+      }
+
+      pagination.innerHTML = html;
+    }
+
+    function applyFilters() {
+      const search = searchInput.value.toLowerCase();
+      filteredCommunities = communities.filter(c => 
+        (c.nom || '').toLowerCase().includes(search) ||
+        (c.quartier || '').toLowerCase().includes(search) ||
+        (c.responsable || '').toLowerCase().includes(search) ||
+        (c.adresse || '').toLowerCase().includes(search)
+      );
+      currentPage = 1;
+      renderTable();
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('modal-title').textContent = 'Ajouter une Communauté';
+      form.reset();
+      modal.classList.add('show');
+    }
+
+    function editCommunity(id) {
+      const comm = communities.find(c => c.id === id);
+      if (!comm) return;
+
+      editingId = id;
+      document.getElementById('modal-title').textContent = 'Modifier la Communauté';
+      document.getElementById('name').value = comm.nom || '';
+      document.getElementById('city').value = comm.quartier || '';
+      document.getElementById('pastor').value = comm.responsable || '';
+      document.getElementById('email').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('description').value = comm.description || '';
+      modal.classList.add('show');
+    }
+
+    function deleteCommunity(id) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cette communauté ?')) return;
+      
+      supabase.deleteCommunity(id)
+        .then(function() {
+          console.log('✅ Communauté supprimée');
+          loadCommunitiesFromSupabase();
+          showSuccess('Communauté supprimée avec succès');
+        })
+        .catch(function(error) {
+          console.error('❌ Erreur suppression:', error);
+          showError('Erreur lors de la suppression: ' + error.message);
+        });
+    }
+
+    function saveCommunity(e) {
+      e.preventDefault();
+
+      const data = {
+        nom: document.getElementById('name').value,
+        quartier: document.getElementById('city').value,
+        responsable: document.getElementById('pastor').value,
+        description: document.getElementById('description').value,
+        active: true
+      };
+
+      if (!data.nom.trim()) {
+        showError('Le nom de la communauté est requis');
+        return;
+      }
+
+      if (editingId) {
+        // Modifier
+        supabase.updateCommunity(editingId, data)
+          .then(function() {
+            console.log('✅ Communauté modifiée');
+            modal.classList.remove('show');
+            form.reset();
+            loadCommunitiesFromSupabase();
+            showSuccess('Communauté modifiée avec succès');
+          })
+          .catch(function(error) {
+            console.error('❌ Erreur modification:', error);
+            showError('Erreur lors de la modification: ' + error.message);
+          });
+      } else {
+        // Créer
+        supabase.createCommunity(data)
+          .then(function() {
+            console.log('✅ Communauté créée');
+            modal.classList.remove('show');
+            form.reset();
+            loadCommunitiesFromSupabase();
+            showSuccess('Communauté créée avec succès');
+          })
+          .catch(function(error) {
+            console.error('❌ Erreur création:', error);
+            showError('Erreur lors de la création: ' + error.message);
+          });
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    function showSuccess(message) {
+      const alert = document.getElementById('success-alert');
+      alert.textContent = '✓ ' + message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 3000);
+    }
+
+    function showError(message) {
+      const alert = document.getElementById('error-alert');
+      alert.textContent = '✗ ' + message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 4000);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+  </script>
+</body>
+</html>

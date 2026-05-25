@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Utilisateurs - Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0a3d6b;
+      --accent: #c9a227;
+      --light: #f8fafc;
+      --text: #333;
+      --text-muted: #666;
+      --border: #e0e0e0;
+      --danger: #f44336;
+      --success: #4CAF50;
+    }
+
+    [data-theme="dark"] {
+      --light: #1e1e1e;
+      --text: #e0e0e0;
+      --text-muted: #b0b0b0;
+      --border: #404040;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-filter {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-filter input,
+    .search-filter select {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .table-wrapper {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .table-wrapper {
+      background: #2a2a2a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--light);
+      border-bottom: 2px solid var(--border);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:hover {
+      background: var(--light);
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #1e88e5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
+    .status-inactive {
+      background: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(21, 101, 192, 0.2);
+      color: var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .action-btn.edit {
+      background: rgba(21, 101, 192, 0.2);
+      color: var(--primary);
+    }
+
+    .action-btn.edit:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .action-btn.delete {
+      background: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .action-btn.delete:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    [data-theme="dark"] .modal-content {
+      background: #2a2a2a;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    [data-theme="dark"] .pagination button {
+      background: #2a2a2a;
+    }
+
+    .pagination button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .pagination button:hover:not(.active) {
+      border-color: var(--primary);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .header-actions {
+        flex-direction: column;
+      }
+
+      .search-filter {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .search-filter input,
+      .search-filter select {
+        width: 100%;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      td, th {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header-actions">
+      <div>
+        <h1>👥 Gestion des Utilisateurs</h1>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">Ajouter, modifier ou supprimer des utilisateurs</p>
+      </div>
+      <button class="btn btn-primary" id="btn-add-user">
+        <i class="fas fa-plus"></i> Nouvel Utilisateur
+      </button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="search-filter">
+      <input type="text" id="search-user" placeholder="Rechercher par nom ou email...">
+      <select id="filter-role">
+        <option value="">Tous les rôles</option>
+        <option value="super_admin">Super Administrateur</option>
+        <option value="admin">Administrateur</option>
+        <option value="manager">Gestionnaire</option>
+        <option value="member">Membre</option>
+      </select>
+      <select id="filter-status">
+        <option value="">Tous les statuts</option>
+        <option value="active">Actif</option>
+        <option value="inactive">Inactif</option>
+      </select>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper" style="margin-top: 1.5rem;">
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th>Utilisateur</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Statut</th>
+            <th>Inscription</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          <!-- Rows will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination" id="pagination">
+      <!-- Buttons will be inserted here -->
+    </div>
+  </div>
+
+  <!-- ADD/EDIT USER MODAL -->
+  <div class="modal" id="user-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Nouvel Utilisateur</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+
+      <form id="user-form">
+        <div class="form-group">
+          <label for="user-name">Nom Complet</label>
+          <input type="text" id="user-name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="user-email">Email</label>
+          <input type="email" id="user-email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="user-phone">Téléphone</label>
+          <input type="tel" id="user-phone">
+        </div>
+
+        <div class="form-group">
+          <label for="user-role">Rôle</label>
+          <select id="user-role" required>
+            <option value="member">Membre</option>
+            <option value="manager">Gestionnaire</option>
+            <option value="admin">Administrateur</option>
+            <option value="super_admin">Super Administrateur</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="user-status">Statut</label>
+          <select id="user-status" required>
+            <option value="active">Actif</option>
+            <option value="inactive">Inactif</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modal-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="modules/users.js"></script>
+</body>
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Administrateur – Église Néo-Apostolique</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0a3d6b;
+      --primary-light: #1e88e5;
+      --accent: #c9a227;
+      --success: #4CAF50;
+      --danger: #f44336;
+      --warning: #ff9800;
+      --info: #2196F3;
+      --light: #f8fafc;
+      --dark: #1a1a1a;
+      --text: #333;
+      --text-muted: #666;
+      --border: #e0e0e0;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.15);
+    }
+
+    [data-theme="dark"] {
+      --light: #1e1e1e;
+      --text: #e0e0e0;
+      --text-muted: #b0b0b0;
+      --border: #404040;
+      --dark: #0a0a0a;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .sidebar-logo p {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu li a:hover,
+    .sidebar-menu li a.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border-left-color: var(--accent);
+    }
+
+    .sidebar-menu li a i {
+      font-size: 1.2rem;
+      width: 30px;
+      text-align: center;
+    }
+
+    /* MAIN */
+    main {
+      margin-left: 280px;
+      width: calc(100% - 280px);
+      min-height: 100vh;
+      background: var(--light);
+    }
+
+    /* TOPBAR */
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    [data-theme="dark"] .topbar {
+      background: #2a2a2a;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .search-box {
+      flex: 0 1 300px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .topbar-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--text);
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    .topbar-btn:hover {
+      color: var(--primary);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* CONTAINER */
+    .container {
+      padding: 2rem;
+      max-width: 1600px;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+    }
+
+    /* STATS CARDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      border-left: 4px solid var(--primary);
+    }
+
+    [data-theme="dark"] .stat-card {
+      background: #2a2a2a;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card.success { border-left-color: var(--success); }
+    .stat-card.danger { border-left-color: var(--danger); }
+    .stat-card.warning { border-left-color: var(--warning); }
+    .stat-card.info { border-left-color: var(--info); }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .stat-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+      opacity: 0.6;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-change {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .stat-change.up { color: var(--success); }
+    .stat-change.down { color: var(--danger); }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card, .activity-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    [data-theme="dark"] .chart-card,
+    [data-theme="dark"] .activity-card {
+      background: #2a2a2a;
+    }
+
+    .chart-card h3, .activity-card h3 {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: var(--light);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        padding: 1rem;
+      }
+
+      .search-box {
+        display: none;
+      }
+    }
+
+    /* LOADING & EMPTY STATES */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>🔐 Super Admin</h2>
+      <p>Contrôle Total du Système</p>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="#dashboard" class="menu-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="communities.html" class="menu-link" target="_self"><i class="fas fa-map-marker-alt"></i> Communautés</a></li>
+      <li><a href="actualites.html" class="menu-link" target="_self"><i class="fas fa-newspaper"></i> Actualités</a></li>
+      <li><a href="events.html" class="menu-link" target="_self"><i class="fas fa-calendar"></i> Événements</a></li>
+      <li><a href="#utilisateurs" class="menu-link"><i class="fas fa-users"></i> Utilisateurs</a></li>
+      <li><a href="#contenu" class="menu-link"><i class="fas fa-file-alt"></i> Contenu</a></li>
+      <li><a href="#medias" class="menu-link"><i class="fas fa-image"></i> Médias</a></li>
+      <li><a href="#statistiques" class="menu-link"><i class="fas fa-bar-chart"></i> Statistiques</a></li>
+      <li><a href="#parametres" class="menu-link"><i class="fas fa-cog"></i> Paramètres</a></li>
+      <li><a href="#logs" class="menu-link"><i class="fas fa-history"></i> Logs d'activité</a></li>
+      <li><a href="#sauvegardes" class="menu-link"><i class="fas fa-database"></i> Sauvegardes</a></li>
+      <li style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem;"><a href="#logout" class="menu-link"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="topbar-btn" id="btn-menu" title="Menu"><i class="fas fa-bars"></i></button>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search" placeholder="Rechercher dans l'application...">
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" id="btn-notifications" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </button>
+        <button class="topbar-btn" id="btn-theme" title="Thème"><i class="fas fa-moon"></i></button>
+        <div class="user-profile">
+          <div class="user-avatar">A</div>
+          <span>Administrateur</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTAINER -->
+    <div class="container">
+      <!-- DASHBOARD -->
+      <div id="dashboard-page" class="page-content">
+        <div class="page-header">
+          <h1>📊 Tableau de Bord</h1>
+          <p>Vue d'ensemble du système et des activités</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+          <div class="stat-card success">
+            <div class="stat-header">
+              <div>
+                <div class="stat-title">Utilisateurs Actifs</div>
+                <div class="stat-value">1,248</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> +12% ce mois</div>
+              </div>
+              <i class="fas fa-users stat-icon"></i>
+            </div>
+          </div>
+
+          <div class="stat-card info">
+            <div class="stat-header">
+              <div>
+                <div class="stat-title">Communautés</div>
+                <div class="stat-value">24</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> +2 récemment</div>
+              </div>
+              <i class="fas fa-map-marker-alt stat-icon"></i>
+            </div>
+          </div>
+
+          <div class="stat-card warning">
+            <div class="stat-header">
+              <div>
+                <div class="stat-title">Événements</div>
+                <div class="stat-value">156</div>
+                <div class="stat-change down"><i class="fas fa-arrow-down"></i> -5% vs dernier mois</div>
+              </div>
+              <i class="fas fa-calendar stat-icon"></i>
+            </div>
+          </div>
+
+          <div class="stat-card danger">
+            <div class="stat-header">
+              <div>
+                <div class="stat-title">Alertes Système</div>
+                <div class="stat-value">2</div>
+                <div class="stat-change up"><i class="fas fa-exclamation"></i> Action requise</div>
+              </div>
+              <i class="fas fa-exclamation-triangle stat-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS & ACTIVITY -->
+        <div class="dashboard-grid">
+          <div class="chart-card">
+            <h3>📈 Activité Mensuelle</h3>
+            <canvas id="activityChart"></canvas>
+          </div>
+
+          <div class="activity-card">
+            <h3>🔔 Activité Récente</h3>
+            <div style="padding: 1rem 0;">
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                <span><strong>Nouvel utilisateur</strong><br><small style="color: var(--text-muted);">il y a 2 min</small></span>
+              </div>
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                <span><strong>Communauté créée</strong><br><small style="color: var(--text-muted);">il y a 1 heure</small></span>
+              </div>
+              <div style="padding: 0.75rem 0;">
+                <span><strong>Sauvegarde BD</strong><br><small style="color: var(--text-muted);">il y a 3 heures</small></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+          <button class="btn btn-primary"><i class="fas fa-download"></i> Exporter Données</button>
+          <button class="btn btn-primary"><i class="fas fa-upload"></i> Importer Données</button>
+          <button class="btn btn-secondary"><i class="fas fa-sync"></i> Rafraîchir</button>
+          <button class="btn btn-danger"><i class="fas fa-shield-alt"></i> Vérifier Sécurité</button>
+        </div>
+      </div>
+
+      <!-- AUTRES PAGES (à implémenter) -->
+      <div id="utilisateurs-page" class="page-content" style="display: none;">
+        <div class="page-header">
+          <h1>👥 Gestion des Utilisateurs</h1>
+          <p>Ajouter, modifier ou supprimer des utilisateurs</p>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Module en développement...</p>
+        </div>
+      </div>
+
+      <div id="communautes-page" class="page-content" style="display: none;">
+        <div class="page-header">
+          <h1>🗺️ Gestion des Communautés</h1>
+          <p>Gérer toutes les communautés de l'application</p>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Module en développement...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="config.js"></script>
+  <script src="super-admin.js"></script>
+</body>
+</html>

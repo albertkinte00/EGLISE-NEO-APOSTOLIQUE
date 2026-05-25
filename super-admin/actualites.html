@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Actualités - Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0a3d6b;
+      --success: #4caf50;
+      --danger: #f44336;
+      --warning: #ff9800;
+      --light: #f8fafc;
+      --dark: #2c3e50;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #333;
+      --text-secondary: #666;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .btn-edit {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-delete {
+      background: var(--danger);
+      color: white;
+    }
+
+    .news-card {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid var(--primary);
+    }
+
+    .news-card h3 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .news-meta {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .news-content {
+      margin: 1rem 0;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+
+    .news-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header h2 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 200px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-danger {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1><i class="fas fa-newspaper"></i> Gestion des Actualités</h1>
+      <p>Publier et gérer les actualités du site</p>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-success" id="success-alert"></div>
+    <div class="alert alert-danger" id="error-alert"></div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="🔍 Rechercher une actualité..."
+        >
+      </div>
+      <button class="btn btn-primary" id="btn-add-news">
+        <i class="fas fa-plus"></i> Nouvelle Actualité
+      </button>
+    </div>
+
+    <!-- NEWS LIST -->
+    <div id="news-container">
+      <!-- Actualités chargées dynamiquement -->
+    </div>
+
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <i class="fas fa-inbox"></i>
+      <h3>Aucune actualité trouvée</h3>
+      <p>Créez votre première actualité en cliquant sur "Nouvelle Actualité"</p>
+    </div>
+  </div>
+
+  <!-- MODAL: Add/Edit News -->
+  <div class="modal" id="news-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Ajouter une Actualité</h2>
+      </div>
+      <form id="news-form">
+        <div class="form-group">
+          <label for="titre">Titre *</label>
+          <input type="text" id="titre" name="titre" required>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Date de publication *</label>
+          <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="contenu">Contenu *</label>
+          <textarea id="contenu" name="contenu" required></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn" style="background: #999; color: white;" onclick="document.getElementById('news-modal').classList.remove('show')">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Publier
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="supabase-client-adapted.js"></script>
+  <script>
+    'use strict';
+
+    // Check authentication
+    var adminEmail = sessionStorage.getItem('super_admin_email');
+    var adminToken = sessionStorage.getItem('super_admin_token');
+    if (!adminEmail || !adminToken) {
+      window.location.href = 'login.html';
+    }
+
+    // Data - Chargé depuis Supabase
+    var allNews = [];
+    var filteredNews = [];
+    var editingId = null;
+
+    const form = document.getElementById('news-form');
+    const modal = document.getElementById('news-modal');
+    const searchInput = document.getElementById('search-input');
+    const btnAdd = document.getElementById('btn-add-news');
+    const container = document.getElementById('news-container');
+    const emptyState = document.getElementById('empty-state');
+
+    btnAdd.addEventListener('click', openAddModal);
+    searchInput.addEventListener('keyup', applyFilters);
+    form.addEventListener('submit', saveNews);
+
+    window.addEventListener('load', function() {
+      console.log('⏳ Chargement des actualités depuis Supabase...');
+      loadNewsFromSupabase();
+    });
+
+    /**
+     * Charge les actualités depuis Supabase
+     */
+    function loadNewsFromSupabase() {
+      supabase.getActualites(100)
+        .then(function(data) {
+          console.log('✅ Actualités chargées:', data);
+          allNews = data || [];
+          filteredNews = [...allNews];
+          renderNews();
+        })
+        .catch(function(error) {
+          console.error('❌ Erreur chargement:', error);
+          showError('Erreur lors du chargement des actualités: ' + error.message);
+        });
+    }
+
+    function renderNews() {
+      if (filteredNews.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      container.innerHTML = filteredNews.map(n => `
+        <div class="news-card">
+          <h3>${escapeHtml(n.titre || '')}</h3>
+          
+          <div class="news-meta">
+            <span><i class="fas fa-calendar"></i> ${formatDate(n.date)}</span>
+            <span><i class="fas fa-user"></i> Admin</span>
+          </div>
+
+          <div class="news-content">
+            ${escapeHtml((n.contenu || '').substring(0, 200))}...
+          </div>
+
+          <div class="news-actions">
+            <button class="btn btn-sm btn-edit" onclick="editNews(${n.id})">
+              <i class="fas fa-edit"></i> Modifier
+            </button>
+            <button class="btn btn-sm btn-delete" onclick="deleteNews(${n.id})">
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function applyFilters() {
+      const search = searchInput.value.toLowerCase();
+      filteredNews = allNews.filter(n => 
+        (n.titre || '').toLowerCase().includes(search) ||
+        (n.contenu || '').toLowerCase().includes(search)
+      );
+      renderNews();
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('modal-title').textContent = 'Ajouter une Actualité';
+      form.reset();
+      modal.classList.add('show');
+    }
+
+    function editNews(id) {
+      const news = allNews.find(n => n.id === id);
+      if (!news) return;
+
+      editingId = id;
+      document.getElementById('modal-title').textContent = 'Modifier l\'Actualité';
+      document.getElementById('titre').value = news.titre || '';
+      document.getElementById('date').value = formatDateForInput(news.date);
+      document.getElementById('contenu').value = news.contenu || '';
+      modal.classList.add('show');
+    }
+
+    function deleteNews(id) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) return;
+      
+      supabase.deleteActualite(id)
+        .then(function() {
+          console.log('✅ Actualité supprimée');
+          loadNewsFromSupabase();
+          showSuccess('Actualité supprimée avec succès');
+        })
+        .catch(function(error) {
+          console.error('❌ Erreur suppression:', error);
+          showError('Erreur lors de la suppression: ' + error.message);
+        });
+    }
+
+    function saveNews(e) {
+      e.preventDefault();
+
+      const titre = document.getElementById('titre').value.trim();
+      const date = document.getElementById('date').value;
+      const contenu = document.getElementById('contenu').value.trim();
+
+      if (!titre || !date || !contenu) {
+        showError('Tous les champs sont requis');
+        return;
+      }
+
+      if (editingId) {
+        // Modifier
+        supabase.updateActualite(editingId, {
+          titre,
+          date,
+          contenu
+        })
+          .then(function() {
+            console.log('✅ Actualité modifiée');
+            modal.classList.remove('show');
+            form.reset();
+            loadNewsFromSupabase();
+            showSuccess('Actualité modifiée avec succès');
+          })
+          .catch(function(error) {
+            console.error('❌ Erreur modification:', error);
+            showError('Erreur lors de la modification: ' + error.message);
+          });
+      } else {
+        // Créer
+        supabase.createActualite(titre, date, contenu)
+          .then(function() {
+            console.log('✅ Actualité créée');
+            modal.classList.remove('show');
+            form.reset();
+            loadNewsFromSupabase();
+            showSuccess('Actualité publiée avec succès');
+          })
+          .catch(function(error) {
+            console.error('❌ Erreur création:', error);
+            showError('Erreur lors de la création: ' + error.message);
+          });
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'N/A';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function formatDateForInput(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function showSuccess(message) {
+      const alert = document.getElementById('success-alert');
+      alert.textContent = '✓ ' + message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 3000);
+    }
+
+    function showError(message) {
+      const alert = document.getElementById('error-alert');
+      alert.textContent = '✗ ' + message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 4000);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+  </script>
+</body>
+</html>

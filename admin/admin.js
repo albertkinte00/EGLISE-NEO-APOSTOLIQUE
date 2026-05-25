@@ -1,54 +1,63 @@
 /**
- * Admin Église Néo-Apostolique – Accès réservé au(x) Gmail configuré(s) dans admin-config.js
+ * Admin Église Néo-Apostolique – Accès réservé aux gestionnaires autorisés.
  * Stockage : Supabase (tables settings, actualites, evenements)
  */
 (function() {
   'use strict';
 
   var SESSION_KEY = 'enac-admin-email';
+  var SESSION_TOKEN_KEY = 'enac-admin-token';
+  var SESSION_ROLE_KEY = 'enac-admin-role';
   var SESSION_UNTIL = 'enac-admin-until';
-  var SESSION_HOURS = 12;
 
   var loginEl = document.getElementById('admin-login');
   var contentEl = document.getElementById('admin-content');
   var loginMsg = document.getElementById('login-msg');
-  var googleBtnEl = document.getElementById('google-btn');
+  var loginButton = document.getElementById('admin-login-submit');
+  var resetButton = document.getElementById('admin-reset-password');
+  var emailInput = document.getElementById('admin-email');
+  var passwordInput = document.getElementById('admin-password');
+  var secretInput = document.getElementById('admin-secret');
 
-  function allowedEmails() {
-    var e = window.ADMIN_ALLOWED_EMAIL;
-    var list = window.ADMIN_ALLOWED_EMAILS;
-    if (list && Array.isArray(list)) return list.map(function(x) { return (x || '').toLowerCase().trim(); });
-    if (e && typeof e === 'string') return [e.toLowerCase().trim()];
-    return [];
-  }
+  var config = window.ADMIN_CONFIG || {};
+  var allowedEmails = (config.ALLOWED_EMAILS || []).map(function(email) { return String(email || '').toLowerCase().trim(); });
+  var accessCode = String(config.ACCESS_CODE || '').trim();
+  var useSupabaseAuth = config.USE_SUPABASE_AUTH === true;
+  var sessionTimeout = (parseInt(config.SESSION_TIMEOUT_MINUTES, 10) || 12) * 60 * 1000;
+  var SUPABASE_URL = config.SUPABASE_URL || 'https://soejilvldrainmblqnex.supabase.co';
+  var SUPABASE_ANON_KEY = config.SUPABASE_ANON_KEY || 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
 
   function isAllowed(email) {
     var em = (email || '').toLowerCase().trim();
-    return allowedEmails().indexOf(em) !== -1;
+    return allowedEmails.length === 0 || allowedEmails.indexOf(em) !== -1;
   }
 
-  function getEmailFromJwt(token) {
+  function isAccessCodeValid(code) {
+    if (!accessCode) return true;
+    return String(code || '').trim() === accessCode;
+  }
+
+  function decodeJwt(token) {
     try {
       var parts = (token || '').split('.');
-      if (parts.length < 2) return '';
+      if (parts.length < 2) return null;
       var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
       var json = decodeURIComponent(atob(payload).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
-      var data = JSON.parse(json);
-      return (data.email || '').toLowerCase().trim();
+      return JSON.parse(json);
     } catch (e) {
-      return '';
+      return null;
     }
   }
 
-  function showLogin(err) {
+  function showLogin(message) {
     if (contentEl) contentEl.style.display = 'none';
     if (loginEl) {
       loginEl.style.display = 'block';
       if (loginMsg) {
-        loginMsg.textContent = err || '';
-        loginMsg.className = 'msg' + (err ? ' error' : '');
+        loginMsg.textContent = message || '';
+        loginMsg.className = 'msg' + (message ? ' error' : '');
       }
     }
   }
@@ -61,26 +70,80 @@
   function sessionValid() {
     try {
       var email = sessionStorage.getItem(SESSION_KEY);
+      var token = sessionStorage.getItem(SESSION_TOKEN_KEY);
       var until = parseInt(sessionStorage.getItem(SESSION_UNTIL), 10);
-      if (!email || !until || until < Date.now()) return false;
-      return isAllowed(email);
+      return Boolean(email && token && until && until > Date.now() && isAllowed(email));
     } catch (e) {
       return false;
     }
   }
 
-  function setSession(email) {
+  function setSession(email, token, role) {
     try {
       sessionStorage.setItem(SESSION_KEY, email);
-      sessionStorage.setItem(SESSION_UNTIL, String(Date.now() + SESSION_HOURS * 60 * 60 * 1000));
+      sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(SESSION_ROLE_KEY, role || 'admin');
+      sessionStorage.setItem(SESSION_UNTIL, String(Date.now() + sessionTimeout));
     } catch (e) {}
   }
 
   function clearSession() {
     try {
       sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_TOKEN_KEY);
+      sessionStorage.removeItem(SESSION_ROLE_KEY);
       sessionStorage.removeItem(SESSION_UNTIL);
     } catch (e) {}
+  }
+
+  function getApiHeaders() {
+    var token = sessionStorage.getItem(SESSION_TOKEN_KEY);
+    return {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + (token || SUPABASE_ANON_KEY),
+      'Content-Type': 'application/json'
+    };
+  }
+
+  async function signInSupabase(email, password) {
+    var response = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ email: email, password: password })
+    });
+
+    var data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.error_description || data?.error || 'Échec de l’authentification');
+    }
+    return data;
+  }
+
+  async function requestPasswordReset(email) {
+    var response = await fetch(SUPABASE_URL + '/auth/v1/recovery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ email: email })
+    });
+
+    if (!response.ok) {
+      var data = await response.json();
+      throw new Error(data?.error_description || data?.error || 'Impossible d’envoyer la demande de réinitialisation');
+    }
+  }
+
+  function getUserRoleFromToken(token) {
+    var jwt = decodeJwt(token);
+    if (!jwt) return null;
+    return jwt.user_metadata?.role || jwt.role || null;
   }
 
   function runInitAdmin() {
@@ -105,15 +168,8 @@
       }
     }
 
-    var SUPABASE_URL = 'https://soejilvldrainmblqnex.supabase.co';
-    var SUPABASE_ANON_KEY = 'sb_publishable_Y1nZvJ1zMajnHZ5bMnJj_w_Op4ph2v8';
-
     function sbHeaders() {
-      return {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      };
+      return getApiHeaders();
     }
 
     var notifInput = document.getElementById('notif-input');
@@ -135,7 +191,6 @@
       loadSettings();
       saveNotif.addEventListener('click', function() {
         var v = (notifInput.value || '').trim();
-        // upsert : si id existe on update, sinon insert (on insère un row unique si ta table l’autorise)
         fetch(SUPABASE_URL + '/rest/v1/settings', {
           method: 'POST',
           headers: Object.assign({}, sbHeaders(), {
@@ -146,7 +201,12 @@
         .then(function(){
           if (notifMsg) notifMsg.textContent = 'Enregistré. Rechargez la page d\'accueil pour voir le changement.';
         })
-        .catch(function(){});
+        .catch(function(){
+          if (notifMsg) {
+            notifMsg.textContent = 'Impossible d\'enregistrer les paramètres.';
+            notifMsg.className = 'msg error';
+          }
+        });
       });
     }
 
@@ -181,7 +241,9 @@
           });
         });
       })
-      .catch(function(){});
+      .catch(function(){
+        actuList.innerHTML = '<li style="color:var(--text-muted);">Impossible de charger les actualités.</li>';
+      });
     }
 
     if (addActu && actuTitre && actuDate && actuContenu) {
@@ -197,7 +259,9 @@
         }).then(function(){
           actuTitre.value = ''; actuDate.value = ''; actuContenu.value = '';
           renderActu();
-        }).catch(function(){});
+        }).catch(function(){
+          if (loginMsg) loginMsg.textContent = 'Impossible d\'ajouter l\'actualité.';
+        });
       });
     }
     renderActu();
@@ -233,7 +297,9 @@
           });
         });
       })
-      .catch(function(){});
+      .catch(function(){
+        evList.innerHTML = '<li style="color:var(--text-muted);">Impossible de charger les événements.</li>';
+      });
     }
 
     if (addEv && evTitre && evDate && evDesc) {
@@ -249,43 +315,76 @@
         }).then(function(){
           evTitre.value = ''; evDate.value = ''; evDesc.value = '';
           renderEv();
-        }).catch(function(){});
+        }).catch(function(){
+          if (loginMsg) loginMsg.textContent = 'Impossible d\'ajouter l\'événement.';
+        });
       });
     }
     renderEv();
   }
 
-  function renderGoogleButton() {
-    var clientId = (window.ADMIN_GOOGLE_CLIENT_ID || '').trim();
-    if (!clientId || !googleBtnEl) {
-      showLogin('Configurez admin-config.js : ajoutez votre Gmail et votre Google Client ID (voir admin-config.example.js).');
+  function handleLogin(event) {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
+    var email = (emailInput && emailInput.value || '').toLowerCase().trim();
+    var password = passwordInput && passwordInput.value || '';
+    var secret = secretInput && secretInput.value || '';
+
+    if (!email || !password || (accessCode && !secret)) {
+      showLogin('Veuillez remplir tous les champs requis.');
       return;
     }
-    if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-      showLogin('Chargement de Google Sign-In… Réessayez dans un instant.');
-      setTimeout(renderGoogleButton, 500);
+
+    if (!isAllowed(email)) {
+      showLogin('Adresse email non autorisée.');
       return;
     }
-    google.accounts.id.initialize({
-      client_id: clientId,
-      callback: function(res) {
-        var email = getEmailFromJwt(res.credential);
-        if (isAllowed(email)) {
-          setSession(email);
+
+    if (!isAccessCodeValid(secret)) {
+      showLogin('Code d\'accès invalide.');
+      return;
+    }
+
+    if (useSupabaseAuth) {
+      signInSupabase(email, password)
+        .then(function(authData) {
+          var token = authData.access_token;
+          var role = getUserRoleFromToken(token) || 'admin';
+          if (role !== 'admin' && role !== 'super_admin') {
+            showLogin('Le compte n\'a pas le rôle administrateur requis.');
+            return;
+          }
+          setSession(email, token, role);
           showAdmin();
           runInitAdmin();
-        } else {
-          showLogin('Accès refusé. Seul le(s) compte(s) Gmail autorisé(s) dans admin-config.js peut/peuvent se connecter.');
-        }
-      }
-    });
-    google.accounts.id.renderButton(googleBtnEl, {
-      theme: 'filled_blue',
-      size: 'large',
-      type: 'standard',
-      text: 'continue_with',
-      width: 280
-    });
+        })
+        .catch(function(err) {
+          showLogin(err.message || 'Erreur de connexion Supabase.');
+        });
+      return;
+    }
+
+    var token = 'local_admin_session_' + Date.now();
+    setSession(email, token, 'admin');
+    showAdmin();
+    runInitAdmin();
+  }
+
+  function handleResetPassword(event) {
+    event.preventDefault();
+    var email = (emailInput && emailInput.value || '').toLowerCase().trim();
+    if (!email) {
+      showLogin('Entrez votre email pour réinitialiser le mot de passe.');
+      return;
+    }
+    requestPasswordReset(email)
+      .then(function() {
+        showLogin('Email de réinitialisation envoyé.');
+      })
+      .catch(function(err) {
+        showLogin(err.message || 'Erreur lors de la réinitialisation de mot de passe.');
+      });
   }
 
   function onLoad() {
@@ -297,6 +396,15 @@
       });
     }
 
+    var loginForm = document.getElementById('admin-login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', handleLogin);
+    }
+
+    if (resetButton) {
+      resetButton.addEventListener('click', handleResetPassword);
+    }
+
     if (sessionValid()) {
       showAdmin();
       runInitAdmin();
@@ -304,22 +412,11 @@
     }
 
     showLogin();
-    if (allowedEmails().length === 0 || !(window.ADMIN_GOOGLE_CLIENT_ID || '').trim()) {
+    if (allowedEmails.length === 0) {
       if (loginMsg) {
         loginMsg.className = 'msg error';
-        loginMsg.textContent = 'Ouvrez admin-config.js et définissez ADMIN_ALLOWED_EMAIL (votre Gmail) et ADMIN_GOOGLE_CLIENT_ID. Voir admin-config.example.js pour la marche à suivre.';
+        loginMsg.textContent = 'Ouvrez admin-config.js et définissez ADMIN_CONFIG.ALLOWED_EMAILS.';
       }
-      return;
-    }
-
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-      renderGoogleButton();
-    } else {
-      window.addEventListener('load', function once() {
-        window.removeEventListener('load', once);
-        setTimeout(renderGoogleButton, 100);
-      });
-      setTimeout(renderGoogleButton, 800);
     }
   }
 

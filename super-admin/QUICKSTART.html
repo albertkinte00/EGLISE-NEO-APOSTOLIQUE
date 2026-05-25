@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Démarrage Rapide - Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      color: #1565c0;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .quick-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .quick-menu a {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #1565c0;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      border-left: 4px solid #1565c0;
+    }
+
+    .quick-menu a:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(21,101,192,0.3);
+    }
+
+    .section {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #1565c0;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section h3 {
+      color: #333;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #c9a227;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #1565c0;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 32px;
+      font-weight: bold;
+      margin-right: 0.75rem;
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 1rem;
+      background: #f0f9ff;
+      border-radius: 8px;
+      border-left: 4px solid #2196F3;
+    }
+
+    .checklist li {
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .checklist input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .warning-box {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .success-box {
+      background: #e8f5e9;
+      border-left: 4px solid #4CAF50;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: #1565c0;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-top: 1rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background: #0a3d6b;
+      transform: translateY(-2px);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .feature-card {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .feature-card i {
+      color: #1565c0;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card h4 {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      header h1 { font-size: 1.5rem; }
+      .section { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <h1><i class="fas fa-rocket"></i> Démarrage Rapide</h1>
+      <p>Guide pour commencer avec le Super Administrateur</p>
+    </header>
+
+    <!-- QUICK MENU -->
+    <div class="quick-menu">
+      <a href="login.html"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+      <a href="index.html" onclick="alert('Vous devez être connecté');return false;"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="README.md"><i class="fas fa-book"></i> Documentation</a>
+      <a href="../admin-access.html"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+
+    <!-- ÉTAPES D'INSTALLATION -->
+    <div class="section">
+      <h2><i class="fas fa-cogs"></i> Installation (5 min)</h2>
+      
+      <div class="step">
+        <span class="step-number">1</span>
+        <strong>Télécharger les fichiers</strong><br>
+        <small>Récupérez le dossier `super-admin/` depuis GitHub ou FTP</small>
+      </div>
+
+      <div class="step">
+        <span class="step-number">2</span>
+        <strong>Configurer le fichier config.js</strong><br>
+        <small>Modifier les URLs Supabase et l'email administrateur</small>
+        <div class="code-block">
+SUPER_ADMIN_CONFIG = {
+  APP_NAME: 'Votre App',
+  AUTH: {
+    SUPER_ADMIN_EMAIL: 'votre@email.com'
+  }
+}
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-number">3</span>
+        <strong>Personnaliser la clé secrète</strong><br>
+        <small>Modifier la clé dans `login.html` (ligne ~230)</small>
+        <div class="warning-box">
+          <i class="fas fa-exclamation-triangle"></i>
+          Utiliser une clé forte et unique (min. 16 caractères)
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-number">4</span>
+        <strong>Tester la connexion</strong><br>
+        <small>Accéder à `login.html` et se connecter avec vos identifiants</small>
+      </div>
+
+      <div class="step">
+        <span class="step-number">5</span>
+        <strong>Activer les sauvegardes</strong><br>
+        <small>Aller à Paramètres → Sauvegardes Programmées</small>
+      </div>
+    </div>
+
+    <!-- PREMIERS ACCÈS -->
+    <div class="section">
+      <h2><i class="fas fa-sign-in-alt"></i> Première Connexion</h2>
+      
+      <p>Lors de votre première visite:</p>
+      
+      <ol style="margin-left: 1.5rem; margin-top: 1rem;">
+        <li style="margin-bottom: 0.75rem;"><strong>Email</strong>: L'adresse configurée dans config.js</li>
+        <li style="margin-bottom: 0.75rem;"><strong>Mot de passe</strong>: Votre mot de passe personnel</li>
+        <li style="margin-bottom: 0.75rem;"><strong>Clé Secrète</strong>: La clé définie dans login.html</li>
+      </ol>
+
+      <div class="success-box">
+        <i class="fas fa-check-circle"></i>
+        <strong>Connexion réussie !</strong> Vous êtes maintenant connecté au Super Admin
+      </div>
+    </div>
+
+    <!-- MODULES DISPONIBLES -->
+    <div class="section">
+      <h2><i class="fas fa-cube"></i> Modules Disponibles</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fas fa-chart-line"></i>
+          <h4>📊 Dashboard</h4>
+          <p>Vue d'ensemble des statistiques et activités</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-users"></i>
+          <h4>👥 Utilisateurs</h4>
+          <p>Gérer tous les utilisateurs et rôles</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-map-marker"></i>
+          <h4>🗺️ Communautés</h4>
+          <p>Gérer les communautés et GPS</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-image"></i>
+          <h4>🖼️ Médias</h4>
+          <p>Uploader et organiser images, vidéos</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-database"></i>
+          <h4>💾 Sauvegardes</h4>
+          <p>Créer, restaurer et programmer des sauvegardes</p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-history"></i>
+          <h4>📋 Logs</h4>
+          <p>Monitorer les activités et erreurs</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TÂCHES COURANTES -->
+    <div class="section">
+      <h2><i class="fas fa-tasks"></i> Tâches Courantes</h2>
+
+      <h3>Créer un nouvel utilisateur</h3>
+      <ol style="margin-left: 1.5rem;">
+        <li>Aller à <strong>Utilisateurs</strong></li>
+        <li>Cliquer <strong>Nouvel Utilisateur</strong></li>
+        <li>Remplir les informations</li>
+        <li>Sélectionner le rôle</li>
+        <li>Cliquer <strong>Enregistrer</strong></li>
+      </ol>
+
+      <h3>Ajouter une communauté</h3>
+      <ol style="margin-left: 1.5rem;">
+        <li>Aller à <strong>Communautés</strong></li>
+        <li>Cliquer <strong>Nouvelle Communauté</strong></li>
+        <li>Remplir les informations de base</li>
+        <li>Positionner sur la carte</li>
+        <li>Ajouter horaires et contacts</li>
+        <li>Cliquer <strong>Enregistrer</strong></li>
+      </ol>
+
+      <h3>Faire une sauvegarde</h3>
+      <ol style="margin-left: 1.5rem;">
+        <li>Aller à <strong>Sauvegardes & Restauration</strong></li>
+        <li>Cliquer <strong>Nouvelle Sauvegarde</strong></li>
+        <li>Attendre la fin (2-5 min)</li>
+        <li>Télécharger ou archiver le fichier</li>
+      </ol>
+    </div>
+
+    <!-- SÉCURITÉ -->
+    <div class="section">
+      <h2><i class="fas fa-shield-alt"></i> Recommandations de Sécurité</h2>
+
+      <ul class="checklist">
+        <li><input type="checkbox" disabled checked> Utiliser HTTPS (SSL/TLS)</li>
+        <li><input type="checkbox" disabled checked> Mot de passe fort (min. 12 caractères)</li>
+        <li><input type="checkbox" disabled checked> Activer 2FA</li>
+        <li><input type="checkbox" disabled checked> Changer régulièrement la clé secrète</li>
+        <li><input type="checkbox" disabled checked> Sauvegardes régulières</li>
+        <li><input type="checkbox" disabled checked> Monitorer les logs d'activité</li>
+        <li><input type="checkbox" disabled checked> Forcer l'expiration de session</li>
+        <li><input type="checkbox" disabled checked> Ne jamais partager les identifiants</li>
+      </ul>
+
+      <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Important :</strong> Cet accès est réservé au responsable principal seulement.
+      </div>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="section">
+      <h2><i class="fas fa-wrench"></i> Dépannage Rapide</h2>
+
+      <h3>❌ "Impossible de se connecter"</h3>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li>Vérifier l'email dans config.js</li>
+        <li>Vérifier la clé secrète (casse sensible)</li>
+        <li>Vider le cache du navigateur</li>
+        <li>Essayer un autre navigateur</li>
+      </ul>
+
+      <h3>❌ "Page 404 - Non trouvée"</h3>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li>Vérifier que le dossier `super-admin/` existe</li>
+        <li>Vérifier les permissions d'accès (644/755)</li>
+        <li>Vérifier l'URL (https, pas http)</li>
+      </ul>
+
+      <h3>❌ "Erreur Supabase"</h3>
+      <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li>Vérifier l'URL du projet Supabase</li>
+        <li>Vérifier la clé ANON_KEY</li>
+        <li>Vérifier la disponibilité de Supabase</li>
+      </ul>
+    </div>
+
+    <!-- PROCHAINES ÉTAPES -->
+    <div class="section">
+      <h2><i class="fas fa-arrow-right"></i> Prochaines Étapes</h2>
+
+      <p>Maintenant que vous êtes prêt, vous pouvez :</p>
+
+      <div style="margin: 1rem 0; display: flex; flex-direction: column; gap: 0.75rem;">
+        <a href="login.html" class="btn">
+          <i class="fas fa-sign-in-alt"></i> Se Connecter au Super Admin
+        </a>
+        <a href="README.md" class="btn" style="background: #c9a227;">
+          <i class="fas fa-book"></i> Lire la Documentation Complète
+        </a>
+        <a href="INSTALLATION.md" class="btn" style="background: #666;">
+          <i class="fas fa-cog"></i> Guide d'Installation Détaillé
+        </a>
+      </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="section">
+      <h2><i class="fas fa-question-circle"></i> Besoin d'Aide?</h2>
+
+      <p>Si vous avez des questions :</p>
+      <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+        <li>📖 Consulter la documentation : <strong>README.md</strong></li>
+        <li>⚙️ Guide d'installation : <strong>INSTALLATION.md</strong></li>
+        <li>📧 Contacter l'admin système : <strong>albertkintsodiza@gmail.com</strong></li>
+      </ul>
+
+      <div class="info-box">
+        <i class="fas fa-lightbulb"></i>
+        <strong>Conseil :</strong> N'oubliez pas de faire une sauvegarde avant toute modification majeure.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>Super Administrateur</strong> v1.0.0 | Église Néo-Apostolique</p>
+    <p>© 2024 - Tous droits réservés | <a href="README.md" style="color: #1565c0;">Documentation</a></p>
+  </footer>
+
+  <script>
+    // Auto-redirect to login if needed
+    console.log('📚 Guide de démarrage rapide chargé');
+    console.log('🔐 Pour continuer, cliquez sur le bouton "Se Connecter"');
+  </script>
+</body>
+</html>
