@@ -6,7 +6,13 @@ window.ADMIN_USERS = [
     email: 'albertkintsodiza@gmail.com',
     role: 'superadmin',
     name: 'Albert Kintsodiza'
+  },
+  {
+    email: 'degus.bitassi@gmail.com',
+    role: 'admin',
+    name: 'Degus Bitassi'
   }
 ];
+
 
 window.ADMIN_GOOGLE_CLIENT_ID = '794837147806-5eqnrj82pu4darqpngcrkrfr7sgo43f5.apps.googleusercontent.com';
