@@ -160,8 +160,28 @@
     function applyTheme(isDark) {
       root.setAttribute('data-theme', isDark ? 'dark' : 'light');
       if (button) {
-        button.textContent = isDark ? 'Light' : 'Dark';
+        button.setAttribute('data-mode', isDark ? 'dark' : 'light');
+        button.innerHTML = '';
+        var icons = document.createElement('span');
+        icons.className = 'icons';
+        icons.innerHTML =
+          '<span class="sun" aria-hidden="true">' +
+            '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-16a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 18a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm10-8a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1ZM5 12a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1Zm14.07-6.07a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 1 1-1.41-1.41l1.41-1.41a1 1 0 0 1 1.41 0ZM7.76 17.66a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 1 1-1.41-1.41l1.41-1.41a1 1 0 0 1 1.41 0Zm12.31 1.41a1 1 0 0 1-1.41 0l-1.41-1.41a1 1 0 1 1 1.41-1.41l1.41 1.41a1 1 0 0 1 0 1.41ZM6.34 6.34a1 1 0 0 1-1.41 0L3.52 4.93a1 1 0 1 1 1.41-1.41l1.41 1.41a1 1 0 0 1 0 1.41Z"/>' +
+            '</svg>' +
+          '</span>' +
+          '<span class="moon" aria-hidden="true">' +
+            '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M21 14.5A9 9 0 0 1 9.5 3a7 7 0 1 0 11.5 11.5Z"/>' +
+            '</svg>' +
+          '</span>';
+        button.appendChild(icons);
+        var label = document.createElement('span');
+        label.className = 'label-text';
+        label.textContent = isDark ? 'Light' : 'Dark';
+        button.appendChild(label);
       }
+
     }
 
     try {
