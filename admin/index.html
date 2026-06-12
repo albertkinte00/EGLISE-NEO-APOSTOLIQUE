@@ -13,7 +13,22 @@
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
   <style>
     body { background: linear-gradient(180deg, #f3f7fb 0%, #eef2f6 100%); }
-    .admin-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .admin-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; position: relative; z-index: 1; }
+    /* loading spinner */
+    .admin-loading {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: #f3f7fb; color: var(--blue-dark);
+      font-size: 1.1rem; transition: opacity 0.3s ease;
+    }
+    .admin-loading.hide { opacity: 0; pointer-events: none; }
+    .admin-loading .spinner {
+      width: 36px; height: 36px; margin-right: 1rem;
+      border: 3px solid rgba(10,61,107,0.15);
+      border-top-color: #0a3d6b; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .admin-sidebar {
       background: linear-gradient(180deg, #082b4a 0%, #0a3d6b 100%);
       color: #fff;
@@ -224,6 +239,9 @@
     </style>
 </head>
 <body>
+  <div id="admin-loading" class="admin-loading">
+    <div class="spinner"></div><span>Chargement de l'administration…</span>
+  </div>
   <div id="admin-login" class="login-shell" style="display:none;">
     <div class="login-card">
       <h2>Connexion administration</h2>

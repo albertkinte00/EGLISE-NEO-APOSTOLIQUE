@@ -339,7 +339,13 @@
     }
   }
 
+  function hideLoading() {
+    var el = document.getElementById('admin-loading');
+    if (el) el.classList.add('hide');
+  }
+
   function showLogin(message) {
+    hideLoading();
     if (contentEl) contentEl.style.display = 'none';
     if (loginEl) loginEl.style.display = 'grid';
     if (loginMsg) {
@@ -349,6 +355,7 @@
   }
 
   function showAdmin(user) {
+    hideLoading();
     if (loginEl) loginEl.style.display = 'none';
     if (contentEl) contentEl.style.display = 'block';
 
@@ -1071,22 +1078,28 @@
       return;
     }
 
+    google.accounts.id.disableAutoSelect();
     google.accounts.id.initialize({
       client_id: clientId,
+      cancel_on_tap_outside: false,
       callback: function(response) {
-        var email = getEmailFromJwt(response.credential);
-        var user = getUserByEmail(email);
+        try {
+          var email = getEmailFromJwt(response.credential);
+          var user = getUserByEmail(email);
 
-        if (!user) {
-          showLogin('Acces refuse pour ce compte Google.');
-          return;
+          if (!user) {
+            showLogin('Acces refuse pour ce compte Google.');
+            return;
+          }
+
+          setSession(user);
+          showAdmin(user);
+          bindMenu();
+          bindForms();
+          loadAllData();
+        } catch(error) {
+          showLogin('Erreur de connexion : ' + (error.message || ''));
         }
-
-        setSession(user);
-        showAdmin(user);
-        bindMenu();
-        bindForms();
-        loadAllData();
       }
     });
 
@@ -1099,23 +1112,33 @@
   }
 
   function init() {
-    if (!getAuthorizedUsers().length) {
-      showLogin('Aucun compte admin configure. Ouvrez admin-config.js.');
-      return;
-    }
+    try {
+      if (!getAuthorizedUsers().length) {
+        showLogin('Aucun compte admin configure. Ouvrez admin-config.js.');
+        return;
+      }
 
-    var sessionUser = getSessionUser();
-    if (sessionUser) {
-      showAdmin(sessionUser);
-      bindMenu();
-      bindForms();
-      loadAllData();
-      return;
-    }
+      var sessionUser = getSessionUser();
+      if (sessionUser) {
+        showAdmin(sessionUser);
+        bindMenu();
+        bindForms();
+        loadAllData();
+        return;
+      }
 
-    showLogin('');
-    renderGoogleButton();
+      showLogin('');
+      renderGoogleButton();
+    } catch(error) {
+      hideLoading();
+      showLogin('Erreur lors du chargement : ' + (error.message || ''));
+    }
   }
+
+  // hide loading if init never runs (edge case)
+  setTimeout(function() {
+    hideLoading();
+  }, 10000);
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
