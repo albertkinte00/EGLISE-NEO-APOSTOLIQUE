@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administration - Eglise Neo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="../style.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#0a3d6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="../image/Nak_logo.svg.png">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
   <style>
     body { background: linear-gradient(180deg, #f3f7fb 0%, #eef2f6 100%); }
     .admin-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
@@ -183,11 +189,28 @@
     .login-card h2 { margin-bottom: 0.5rem; }
     .login-card p { color: var(--text-muted); }
     .hidden-by-role { display: none !important; }
-    @media (max-width: 980px) {
-      .admin-shell { grid-template-columns: 1fr; }
-      .admin-sidebar { position: static; height: auto; }
-    }
-  </style>
+      .preview-box {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid rgba(21,101,192,0.12);
+        display: none;
+      }
+      .preview-box.show { display: block; }
+      .preview-box img {
+        max-width: 200px;
+        max-height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+      .ql-toolbar { border-radius: 12px 12px 0 0 !important; }
+      .ql-container { border-radius: 0 0 12px 12px !important; }
+      @media (max-width: 980px) {
+        .admin-shell { grid-template-columns: 1fr; }
+        .admin-sidebar { position: static; height: auto; }
+      }
+    </style>
 </head>
 <body>
   <div id="admin-login" class="login-shell" style="display:none;">
@@ -215,8 +238,12 @@
           <button type="button" data-section="actualites">Actualites</button>
           <button type="button" data-section="evenements">Evenements</button>
           <button type="button" data-section="medias">Medias</button>
+          <button type="button" data-section="galerie">Galerie</button>
+          <button type="button" data-section="publications">Publications</button>
+          <button type="button" data-section="professions">Professions</button>
           <button type="button" data-section="communautes">Communautes</button>
           <button type="button" data-section="details-communautes">Contacts et horaires</button>
+          <button type="button" data-section="versets_quotidiens">Versets quotidiens</button>
         </nav>
       </aside>
 
@@ -366,8 +393,21 @@
                     <input type="text" id="actualites-date" placeholder="Mai 2026">
                   </div>
                   <div class="field full">
-                    <label for="actualites-contenu">Contenu</label>
-                    <textarea id="actualites-contenu" required></textarea>
+                    <label for="actualites-contenu">Contenu (texte riche)</label>
+                    <textarea id="actualites-contenu" style="display:none;"></textarea>
+                    <div id="actualites-contenu-editor" style="min-height:250px;border-radius:12px;"></div>
+                  </div>
+                  <div class="field">
+                    <label for="actualites-image-url">Image (URL)</label>
+                    <input type="url" id="actualites-image-url" placeholder="https://...">
+                  </div>
+                  <div class="field" style="padding-top:1.7rem;">
+                    <label>&nbsp;</label>
+                    <input type="file" accept="image/*" id="actualites-image-upload" style="padding:0.5rem 0;border:none;">
+                    <button type="button" class="btn-muted" id="actualites-upload-btn">Uploader image</button>
+                  </div>
+                  <div class="field full">
+                    <div id="actualites-image-preview"></div>
                   </div>
                   <div class="field">
                     <label for="actualites-link-url">Lien</label>
@@ -489,6 +529,170 @@
               </form>
               <div class="message-bar" id="medias-message-bar"></div>
               <div class="list-table" id="medias-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-galerie">
+            <div class="panel">
+              <h3>Galerie d'images</h3>
+              <p class="helper">Photos affichees dans la page Galerie du site. Creez des categories pour organiser les images.</p>
+              <form id="galerie-form">
+                <input type="hidden" id="galerie-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="galerie-titre">Titre</label>
+                    <input type="text" id="galerie-titre">
+                  </div>
+                  <div class="field">
+                    <label for="galerie-categorie">Categorie</label>
+                    <input type="text" id="galerie-categorie" placeholder="cultes, jeunesse, chorale, communaute" required>
+                  </div>
+                  <div class="field">
+                    <label for="galerie-image-url">Image (URL)</label>
+                    <input type="url" id="galerie-image-url" placeholder="https://..." required>
+                  </div>
+                  <div class="field" style="padding-top:1.7rem;">
+                    <label>&nbsp;</label>
+                    <input type="file" accept="image/*" id="galerie-image-upload" style="padding:0.5rem 0;border:none;">
+                    <button type="button" class="btn-muted" id="galerie-upload-btn">Uploader image</button>
+                  </div>
+                  <div class="field full">
+                    <div id="galerie-image-preview"></div>
+                  </div>
+                  <div class="field full">
+                    <label for="galerie-description">Description</label>
+                    <input type="text" id="galerie-description">
+                  </div>
+                  <div class="field">
+                    <label for="galerie-sort-order">Ordre</label>
+                    <input type="number" id="galerie-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="galerie-is-published" checked>
+                    <label for="galerie-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="galerie-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="galerie-message-bar"></div>
+              <div class="list-table" id="galerie-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-publications">
+            <div class="panel">
+              <h3>Publications</h3>
+              <p class="helper">Articles, annonces et contenus publics affiches sur la page Actualites.</p>
+              <form id="publications-form">
+                <input type="hidden" id="publications-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="publications-titre">Titre</label>
+                    <input type="text" id="publications-titre" required>
+                  </div>
+                  <div class="field">
+                    <label for="publications-date">Date</label>
+                    <input type="text" id="publications-date" placeholder="Juin 2026">
+                  </div>
+                  <div class="field">
+                    <label for="publications-categorie">Categorie</label>
+                    <input type="text" id="publications-categorie" placeholder="Actualite, Annonce, Article">
+                  </div>
+                  <div class="field full">
+                    <label for="publications-contenu">Contenu (texte riche)</label>
+                    <textarea id="publications-contenu" style="display:none;"></textarea>
+                    <div id="publications-contenu-editor" style="min-height:300px;border-radius:12px;"></div>
+                  </div>
+                  <div class="field">
+                    <label for="publications-image-url">Image (URL)</label>
+                    <input type="url" id="publications-image-url" placeholder="https://...">
+                  </div>
+                  <div class="field" style="padding-top:1.7rem;">
+                    <label>&nbsp;</label>
+                    <input type="file" accept="image/*" id="publications-image-upload" style="padding:0.5rem 0;border:none;">
+                    <button type="button" class="btn-muted" id="publications-upload-btn">Uploader image</button>
+                  </div>
+                  <div class="field full">
+                    <div id="publications-image-preview"></div>
+                  </div>
+                  <div class="field">
+                    <label for="publications-lien">Lien</label>
+                    <input type="url" id="publications-lien">
+                  </div>
+                  <div class="field">
+                    <label for="publications-sort-order">Ordre</label>
+                    <input type="number" id="publications-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="publications-is-published" checked>
+                    <label for="publications-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="publications-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="publications-message-bar"></div>
+              <div class="list-table" id="publications-list-admin"></div>
+            </div>
+          </section>
+
+          <section class="section-screen" id="screen-professions">
+            <div class="panel">
+              <h3>Professions de foi / Membres du ministere</h3>
+              <p class="helper">Profils des ministres, apotres et responsables affiches sur la page Le Ministere.</p>
+              <form id="professions-form">
+                <input type="hidden" id="professions-id">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="professions-nom">Nom complet</label>
+                    <input type="text" id="professions-nom" required>
+                  </div>
+                  <div class="field">
+                    <label for="professions-titre">Titre / Fonction</label>
+                    <input type="text" id="professions-titre" placeholder="Apotre de district">
+                  </div>
+                  <div class="field">
+                    <label for="professions-role">Role</label>
+                    <input type="text" id="professions-role" placeholder="Responsable du Congo">
+                  </div>
+                  <div class="field full">
+                    <label for="professions-description">Description</label>
+                    <textarea id="professions-description" style="min-height:150px;"></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="professions-photo-url">Photo (URL)</label>
+                    <input type="url" id="professions-photo-url" placeholder="https://...">
+                  </div>
+                  <div class="field" style="padding-top:1.7rem;">
+                    <label>&nbsp;</label>
+                    <input type="file" accept="image/*" id="professions-photo-upload" style="padding:0.5rem 0;border:none;">
+                    <button type="button" class="btn-muted" id="professions-upload-btn">Uploader photo</button>
+                  </div>
+                  <div class="field">
+                    <label for="professions-email">Email</label>
+                    <input type="text" id="professions-email">
+                  </div>
+                  <div class="field">
+                    <label for="professions-sort-order">Ordre</label>
+                    <input type="number" id="professions-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="professions-is-published" checked>
+                    <label for="professions-is-published">Publie</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="professions-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="professions-message-bar"></div>
+              <div class="list-table" id="professions-list-admin"></div>
             </div>
           </section>
 
@@ -649,6 +853,44 @@
               <div class="message-bar" id="relations-message-bar"></div>
             </div>
           </section>
+
+          <section class="section-screen" id="screen-versets_quotidiens">
+            <div class="panel">
+              <h3>Versets quotidiens</h3>
+              <p class="helper">Message biblique du jour. Le verset affiché change automatiquement toutes les 24h. Inspiré du Catéchisme NAC.</p>
+              <form id="versets-quotidiens-form">
+                <input type="hidden" id="versets-quotidiens-id">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="versets-quotidiens-texte">Texte du verset</label>
+                    <textarea id="versets-quotidiens-texte" required></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="versets-quotidiens-reference">Référence biblique</label>
+                    <input type="text" id="versets-quotidiens-reference" placeholder="Jean 3:16" required>
+                  </div>
+                  <div class="field">
+                    <label for="versets-quotidiens-source">Source (Catéchisme NAC)</label>
+                    <input type="text" id="versets-quotidiens-source" placeholder="Catéchisme NAC – Foi">
+                  </div>
+                  <div class="field">
+                    <label for="versets-quotidiens-sort-order">Ordre</label>
+                    <input type="number" id="versets-quotidiens-sort-order" value="0">
+                  </div>
+                  <div class="inline-check">
+                    <input type="checkbox" id="versets-quotidiens-is-published" checked>
+                    <label for="versets-quotidiens-is-published">Publié</label>
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="button" class="btn-muted" data-reset-form="versets-quotidiens-form">Vider</button>
+                </div>
+              </form>
+              <div class="message-bar" id="versets-quotidiens-message-bar"></div>
+              <div class="list-table" id="versets-quotidiens-list-admin"></div>
+            </div>
+          </section>
         </div>
       </main>
     </div>
@@ -656,6 +898,14 @@
 
   <script src="admin-config.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"></script>
   <script src="admin.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js').catch(function(err) {
+        console.warn('[PWA] Erreur SW:', err);
+      });
+    }
+  </script>
 </body>
 </html>

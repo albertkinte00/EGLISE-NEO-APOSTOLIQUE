@@ -1,0 +1,39 @@
+{
+  "name": "Église Néo-Apostolique – Brazzaville",
+  "short_name": "ENA Brazza",
+  "description": "Site officiel de l'Église Néo-Apostolique de Brazzaville – Congo. Cultes, événements, médias et actualités.",
+  "start_url": "/site_neo_apostolique_complet/index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0a3d6b",
+  "scope": "/site_neo_apostolique_complet/",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "categories": ["religion", "education"],
+  "icons": [
+    {
+      "src": "image/Nak_logo.svg.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "image/Nak_logo.svg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "image/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "image/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

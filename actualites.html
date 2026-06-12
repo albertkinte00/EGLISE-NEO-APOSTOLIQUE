@@ -6,6 +6,11 @@
   <meta name="description" content="Actualités et annonces – Église Néo-Apostolique Brazzaville.">
   <title>Actualités – Église Néo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a3d6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="image/Nak_logo.svg.png">
 </head>
 <body>
   <header class="site-header">
@@ -36,25 +41,8 @@
         <h2 class="section-title">Actualités</h2>
         <p style="text-align: center; margin-bottom: 2rem;">Articles et annonces importantes de la communauté.</p>
 
-        <div class="cards" id="actualites-list">
-          <!-- Rempli dynamiquement par enacRenderActualites + contenu par défaut ci-dessous -->
-          <article class="card reveal">
-            <h3>Bienvenue sur notre nouveau site</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Janvier 2026</p>
-            <p>Le site de l'Église Néo-Apostolique de Brazzaville a été rénové pour vous offrir un accès plus simple aux horaires des cultes, aux événements et aux médias. Restez connectés.</p>
-          </article>
-          <article class="card reveal">
-            <h3>Horaires des cultes</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Rappel</p>
-            <p>Le culte dominical a lieu chaque dimanche à 9h00. Les réunions de prière en semaine sont annoncées localement et sur notre canal WhatsApp.</p>
-            <a href="cultes.html" class="btn btn-outline" style="margin-top: 0.5rem;">Voir les horaires</a>
-          </article>
-          <article class="card reveal">
-            <h3>Suivre les cultes en ligne</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Médias</p>
-            <p>Vous pouvez suivre nos cultes et reportages sur YouTube et Facebook. Liens dans la rubrique <a href="medias.html">Médias</a>.</p>
-            <a href="medias.html" class="btn btn-primary" style="margin-top: 0.5rem;">Chaînes officielles</a>
-          </article>
+        <div class="cards" id="publications-list">
+          <!-- Rempli dynamiquement par enacRenderPublications() depuis l'admin -->
         </div>
 
         <p style="text-align: center; margin-top: 2rem; color: var(--text-muted);">Pour les annonces à la communauté (mariages, condoléances, etc.), contactez le bureau ou votre ministre.</p>
@@ -84,7 +72,7 @@
   </footer>
   <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
   <script src="script.js"></script>
-  <script>if (typeof enacRenderActualites === 'function') enacRenderActualites('actualites-list');</script>
+  <script>if (typeof enacRenderPublications === 'function') enacRenderPublications('publications-list');</script>
   <script>if (typeof enacRenderAnnonces === 'function') enacRenderAnnonces('annonces-list');</script>
 </body>
 </html>

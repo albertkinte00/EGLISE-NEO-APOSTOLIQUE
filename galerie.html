@@ -6,6 +6,11 @@
   <meta name="description" content="Galerie photos – Église Néo-Apostolique Brazzaville, par catégories.">
   <title>Galerie – Église Néo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a3d6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="image/Nak_logo.svg.png">
 </head>
 <body>
   <header class="site-header">
@@ -100,40 +105,6 @@
   </div>
   <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
   <script src="script.js"></script>
-  <script>
-    (function() {
-      var filters = document.getElementById('cat-filters');
-      var gallery = document.getElementById('main-gallery');
-      var items = gallery ? gallery.querySelectorAll('.gallery-item') : [];
-      var lb = document.getElementById('lightbox');
-      var lbImg = document.getElementById('lightbox-img');
-
-      if (filters) {
-        filters.querySelectorAll('button').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            filters.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
-            this.classList.add('active');
-            var cat = this.getAttribute('data-cat');
-            items.forEach(function(el) {
-              var c = el.getAttribute('data-cat');
-              el.style.display = (cat === 'toutes' || c === cat) ? '' : 'none';
-            });
-          });
-        });
-      }
-
-      items.forEach(function(el) {
-        el.addEventListener('click', function() {
-          var src = this.getAttribute('data-src') || this.querySelector('img').src;
-          if (lbImg) lbImg.src = src;
-          if (lb) lb.classList.add('open');
-        });
-      });
-      if (lb) {
-        lb.addEventListener('click', function() { this.classList.remove('open'); });
-        if (lbImg) lbImg.addEventListener('click', function(e) { e.stopPropagation(); });
-      }
-    })();
-  </script>
+  <script>if (typeof enacRenderGalerie === 'function') enacRenderGalerie('main-gallery', 'cat-filters');</script>
 </body>
 </html>

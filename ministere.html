@@ -6,6 +6,11 @@
   <meta name="description" content="Le Ministère – Apôtres et ministres de l'Église Néo-Apostolique de Brazzaville.">
   <title>Le Ministère – Église Néo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a3d6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="image/Nak_logo.svg.png">
 </head>
 <body>
   <header class="site-header">
@@ -38,51 +43,8 @@
           Les apôtres assurent la direction spirituelle et l’encadrement pastoral de la communauté.
         </p>
 
-        <div class="cards">
-          <div class="card minister-card reveal">
-            <div class="photo-wrap">
-              <img src="image/ministere/apotre_patriarche_adjoint.png" alt="Apôtre-patriarche">
-            </div>
-            <span class="role">Apôtre-patriarche</span>
-            <h3>Jean-Luc Schneider</h3>
-            <p>Chef spirituel international de l’Église néo-apostolique.</p>
-          </div>
-
-          <div class="card minister-card reveal">
-            <div class="photo-wrap">
-              <img src="image/ministere/apotre_ville_de_brazzaville.png" alt="Apôtre de district (District du Canada)">
-            </div>
-            <span class="role">Apôtre de district (District du Canada)</span>
-            <h3>Arnaud MARTIG</h3>
-            <p>Responsable du district du Canada, dont dépend l’Église néo-apostolique du Congo.</p>
-          </div>
-
-          <div class="card minister-card reveal">
-            <div class="photo-wrap">
-              <img src="image/ministere/apotre_ville_de_brazzaville.png" alt="Apôtre responsable du Congo">
-            </div>
-            <span class="role">Apôtre responsable du Congo</span>
-            <h3>Aldin MAKOUNDI</h3>
-            <p>Basé à Pointe-Noire, il supervise l’ensemble de l’Église néo-apostolique au Congo.</p>
-          </div>
-
-          <div class="card minister-card reveal">
-            <div class="photo-wrap">
-              <img src="image/ministere/apotre_ville_de_brazzaville.png" alt="Apôtre de Brazzaville">
-            </div>
-            <span class="role">Apôtre responsable du district apostolique de Brazzaville</span>
-            <h3>Davi KITSOUKOU</h3>
-            <p>Responsable de la région de Brazzaville.</p>
-          </div>
-
-          <div class="card minister-card reveal">
-            <div class="photo-wrap">
-              <img src="image/ministere/apotre_ville_de_brazzaville.png" alt="Apôtre de Dolisie">
-            </div>
-            <span class="role">Apôtre responsable du district apostolique de Dolisie</span>
-            <h3>Evariste MASSAMBA</h3>
-            <p>Responsable de la région de Dolisie.</p>
-          </div>
+        <div class="cards" id="ministere-list">
+          <!-- Rempli dynamiquement par enacRenderProfessions() depuis l'admin -->
         </div>
 
         <p style="text-align: center; margin-top: 2.25rem; color: var(--text-muted); font-size: 0.95rem;">
@@ -99,6 +61,7 @@
 
   <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">🌓</button>
   <script src="script.js"></script>
+  <script>if (typeof enacRenderProfessions === 'function') enacRenderProfessions('ministere-list');</script>
 </body>
 </html>
 

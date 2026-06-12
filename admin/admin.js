@@ -28,8 +28,38 @@
     communautes: [],
     contacts: [],
     horaires: [],
-    activites: []
+    activites: [],
+    versets_quotidiens: []
   };
+
+  var QUILL_EDITORS = {};
+
+  var SUPABASE_BUCKET = 'ena-images';
+
+  function uploadImage(file) {
+    return new Promise(function(resolve, reject) {
+      if (!file) return reject(new Error('Aucun fichier selectionne'));
+
+      var ext = file.name.split('.').pop();
+      var fileName = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+      var formData = new FormData();
+      formData.append('file', file);
+
+      fetch(SUPABASE_URL + '/storage/v1/object/' + SUPABASE_BUCKET + '/' + fileName, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: file
+      }).then(function(resp) {
+        if (!resp.ok) return resp.text().then(function(t) { throw new Error(t); });
+        var publicUrl = SUPABASE_URL + '/storage/v1/object/public/' + SUPABASE_BUCKET + '/' + fileName;
+        resolve(publicUrl);
+      }).catch(function(err) {
+        reject(err);
+      });
+    });
+  }
 
   var entityConfigs = {
     annonces: {
@@ -63,14 +93,15 @@
       fields: [
         { id: 'actualites-titre', key: 'titre', type: 'text' },
         { id: 'actualites-date', key: 'date', type: 'text' },
-        { id: 'actualites-contenu', key: 'contenu', type: 'text' },
+        { id: 'actualites-contenu', key: 'contenu', type: 'richtext' },
+        { id: 'actualites-image-url', key: 'image_url', type: 'text' },
         { id: 'actualites-link-url', key: 'link_url', type: 'text' },
         { id: 'actualites-link-label', key: 'link_label', type: 'text' },
         { id: 'actualites-sort-order', key: 'sort_order', type: 'number' },
         { id: 'actualites-is-published', key: 'is_published', type: 'checkbox' }
       ],
       title: function(row) { return row.titre || 'Actualite'; },
-      summary: function(row) { return row.contenu || ''; }
+      summary: function(row) { return row.contenu ? row.contenu.replace(/<[^>]+>/g, '').substring(0, 80) : ''; }
     },
     evenements: {
       key: 'evenements',
@@ -136,6 +167,87 @@
       ],
       title: function(row) { return row.nom || 'Communaute'; },
       summary: function(row) { return [row.quartier, row.district_apostolique, row.responsable].filter(Boolean).join(' - '); }
+    },
+    publications: {
+      key: 'publications',
+      table: 'publications',
+      formId: 'publications-form',
+      listId: 'publications-list-admin',
+      messageId: 'publications-message-bar',
+      hiddenId: 'publications-id',
+      defaults: { sort_order: 0, is_published: true },
+      fields: [
+        { id: 'publications-titre', key: 'titre', type: 'text' },
+        { id: 'publications-date', key: 'date', type: 'text' },
+        { id: 'publications-categorie', key: 'categorie', type: 'text' },
+        { id: 'publications-contenu', key: 'contenu', type: 'richtext' },
+        { id: 'publications-image-url', key: 'image_url', type: 'url' },
+        { id: 'publications-lien', key: 'lien', type: 'url' },
+        { id: 'publications-sort-order', key: 'sort_order', type: 'number' },
+        { id: 'publications-is-published', key: 'is_published', type: 'checkbox' }
+      ],
+      title: function(row) { return row.titre || 'Publication'; },
+      summary: function(row) { return [row.date, row.categorie].filter(Boolean).join(' - '); }
+    },
+    galerie: {
+      key: 'galerie',
+      table: 'galerie_images',
+      formId: 'galerie-form',
+      listId: 'galerie-list-admin',
+      messageId: 'galerie-message-bar',
+      hiddenId: 'galerie-id',
+      defaults: { sort_order: 0, is_published: true },
+      fields: [
+        { id: 'galerie-titre', key: 'titre', type: 'text' },
+        { id: 'galerie-categorie', key: 'categorie', type: 'text' },
+        { id: 'galerie-image-url', key: 'image_url', type: 'text' },
+        { id: 'galerie-description', key: 'description', type: 'text' },
+        { id: 'galerie-sort-order', key: 'sort_order', type: 'number' },
+        { id: 'galerie-is-published', key: 'is_published', type: 'checkbox' }
+      ],
+      title: function(row) { return row.titre || row.categorie || 'Image'; },
+      summary: function(row) {
+        return [row.categorie, row.description].filter(Boolean).join(' - ');
+      }
+    },
+    professions: {
+      key: 'professions',
+      table: 'professions',
+      formId: 'professions-form',
+      listId: 'professions-list-admin',
+      messageId: 'professions-message-bar',
+      hiddenId: 'professions-id',
+      defaults: { sort_order: 0, is_published: true },
+      fields: [
+        { id: 'professions-nom', key: 'nom', type: 'text' },
+        { id: 'professions-titre', key: 'titre', type: 'text' },
+        { id: 'professions-role', key: 'role', type: 'text' },
+        { id: 'professions-description', key: 'description', type: 'textarea' },
+        { id: 'professions-photo-url', key: 'photo_url', type: 'url' },
+        { id: 'professions-email', key: 'email', type: 'text' },
+        { id: 'professions-sort-order', key: 'sort_order', type: 'number' },
+        { id: 'professions-is-published', key: 'is_published', type: 'checkbox' }
+      ],
+      title: function(row) { return row.nom || 'Profession'; },
+      summary: function(row) { return [row.role, row.titre].filter(Boolean).join(' - '); }
+    },
+    versets_quotidiens: {
+      key: 'versets_quotidiens',
+      table: 'versets_quotidiens',
+      formId: 'versets-quotidiens-form',
+      listId: 'versets-quotidiens-list-admin',
+      messageId: 'versets-quotidiens-message-bar',
+      hiddenId: 'versets-quotidiens-id',
+      defaults: { sort_order: 0, is_published: true },
+      fields: [
+        { id: 'versets-quotidiens-texte', key: 'texte', type: 'textarea' },
+        { id: 'versets-quotidiens-reference', key: 'reference', type: 'text' },
+        { id: 'versets-quotidiens-source', key: 'source', type: 'text' },
+        { id: 'versets-quotidiens-sort-order', key: 'sort_order', type: 'number' },
+        { id: 'versets-quotidiens-is-published', key: 'is_published', type: 'checkbox' }
+      ],
+      title: function(row) { return row.reference || 'Verset'; },
+      summary: function(row) { return row.texte ? row.texte.substring(0, 80) : ''; }
     }
   };
 
@@ -308,7 +420,112 @@
     });
   }
 
+  function initQuillEditor(textareaId) {
+    var textarea = document.getElementById(textareaId);
+    if (!textarea) return null;
+
+    var editorId = textareaId + '-editor';
+    var editorEl = document.getElementById(editorId);
+    if (!editorEl) return null;
+
+    if (QUILL_EDITORS[textareaId]) {
+      return QUILL_EDITORS[textareaId];
+    }
+
+    var quill = new Quill(editorEl, {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'align': [] }],
+          ['link', 'blockquote', 'code-block'],
+          ['clean']
+        ]
+      }
+    });
+
+    quill.root.innerHTML = textarea.value || '';
+    QUILL_EDITORS[textareaId] = quill;
+
+    return quill;
+  }
+
+  function syncQuillToTextarea(textareaId) {
+    var quill = QUILL_EDITORS[textareaId];
+    var textarea = document.getElementById(textareaId);
+    if (quill && textarea) {
+      textarea.value = quill.root.innerHTML;
+    }
+  }
+
+  function bindImagePreview(urlInputId, previewContainerId) {
+    var input = document.getElementById(urlInputId);
+    var container = document.getElementById(previewContainerId);
+    if (!input || !container) return;
+
+    function updatePreview() {
+      var url = input.value.trim();
+      if (url) {
+        container.innerHTML = '<div class="preview-box show"><img src="' + escapeHtml(url) + '" alt="Apercu" onerror="this.parentElement.style.display=\'none\'"></div>';
+      } else {
+        container.innerHTML = '';
+      }
+    }
+
+    input.addEventListener('input', updatePreview);
+    input.addEventListener('change', updatePreview);
+  }
+
+  function bindImageUpload(btnId, fileId, urlId, previewId) {
+    var btn = document.getElementById(btnId);
+    var fileInput = document.getElementById(fileId);
+    var urlInput = document.getElementById(urlId);
+    var previewContainer = document.getElementById(previewId);
+    if (!btn || !fileInput || !urlInput) return;
+
+    fileInput.addEventListener('change', function() {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file || !previewContainer) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        previewContainer.innerHTML = '<div class="preview-box show"><img src="' + e.target.result + '" alt="Apercu"></div>';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    btn.addEventListener('click', function() {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) { alert('Selectionnez d abord un fichier.'); return; }
+      btn.disabled = true;
+      btn.textContent = 'Upload...';
+      uploadImage(file).then(function(url) {
+        urlInput.value = url;
+        if (previewContainer) {
+          previewContainer.innerHTML = '<div class="preview-box show"><img src="' + escapeHtml(url) + '" alt="Apercu"></div>';
+        }
+        alert('Image uploadee avec succes !');
+        btn.disabled = false;
+        btn.textContent = 'Uploader image';
+      }).catch(function(err) {
+        alert('Erreur upload: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Uploader image';
+      });
+    });
+  }
+
   function readField(field) {
+    if (field.type === 'richtext') {
+      var quill = QUILL_EDITORS[field.id];
+      if (quill) {
+        return quill.root.innerHTML.trim();
+      }
+      var input = document.getElementById(field.id);
+      return input ? input.value.trim() : null;
+    }
+
     var input = document.getElementById(field.id);
     if (!input) return null;
 
@@ -324,6 +541,18 @@
   }
 
   function writeField(field, value) {
+    if (field.type === 'richtext') {
+      var input = document.getElementById(field.id);
+      if (input) {
+        input.value = value == null ? '' : value;
+      }
+      var quill = QUILL_EDITORS[field.id];
+      if (quill) {
+        quill.root.innerHTML = value == null ? '' : value;
+      }
+      return;
+    }
+
     var input = document.getElementById(field.id);
     if (!input) return;
 
@@ -360,6 +589,18 @@
       var field = config.fields.find(function(item) { return item.key === key; });
       if (field) {
         writeField(field, config.defaults[key]);
+      }
+    });
+    (config.fields || []).forEach(function(field) {
+      if (field.type === 'richtext') {
+        var quill = QUILL_EDITORS[field.id];
+        if (quill) {
+          quill.root.innerHTML = '';
+        }
+        var input = document.getElementById(field.id);
+        if (input) {
+          input.value = '';
+        }
       }
     });
   }
@@ -422,6 +663,12 @@
 
   function saveEntity(config, event) {
     event.preventDefault();
+
+    (config.fields || []).forEach(function(field) {
+      if (field.type === 'richtext') {
+        syncQuillToTextarea(field.id);
+      }
+    });
 
     var payload = getEntityPayload(config);
     var id = document.getElementById(config.hiddenId).value;
@@ -538,7 +785,11 @@
       { label: 'Actualites', value: state.actualites.length },
       { label: 'Evenements', value: state.evenements.length },
       { label: 'Medias', value: state.medias.length },
-      { label: 'Communautes', value: state.communautes.length }
+      { label: 'Galerie', value: state.galerie ? state.galerie.length : 0 },
+      { label: 'Publications', value: state.publications.length },
+      { label: 'Professions', value: state.professions.length },
+      { label: 'Communautes', value: state.communautes.length },
+      { label: 'Versets quotidiens', value: state.versets_quotidiens ? state.versets_quotidiens.length : 0 }
     ];
 
     dashboardStats.innerHTML = stats.map(function(item) {
@@ -753,6 +1004,19 @@
         });
       });
     });
+
+    initQuillEditor('actualites-contenu');
+    initQuillEditor('publications-contenu');
+
+    bindImageUpload('actualites-upload-btn', 'actualites-image-upload', 'actualites-image-url', 'actualites-image-preview');
+    bindImageUpload('publications-upload-btn', 'publications-image-upload', 'publications-image-url', 'publications-image-preview');
+    bindImageUpload('galerie-upload-btn', 'galerie-image-upload', 'galerie-image-url', 'galerie-image-preview');
+    bindImageUpload('professions-upload-btn', 'professions-photo-upload', 'professions-photo-url', null);
+
+    bindImagePreview('actualites-image-url', 'actualites-image-preview');
+    bindImagePreview('publications-image-url', 'publications-image-preview');
+    bindImagePreview('galerie-image-url', 'galerie-image-preview');
+    bindImagePreview('professions-photo-url', null);
 
     var settingsForm = document.getElementById('settings-form');
     if (settingsForm) settingsForm.addEventListener('submit', saveSettings);

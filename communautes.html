@@ -6,6 +6,11 @@
   <meta name="description" content="Localisez la communauté Néo-Apostolique la plus proche de vous.">
   <title>Localiser une Communauté – Église Néo-Apostolique Brazzaville</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a3d6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="image/Nak_logo.svg.png">
   
   <!-- Leaflet.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -99,28 +104,52 @@
     /* Contrôles carte */
     .map-controls {
       position: absolute;
-      top: 1rem;
-      left: 1rem;
+      bottom: 1.5rem;
+      right: 1rem;
       z-index: 20;
       display: flex;
-      flex-direction: column;
       gap: 0.5rem;
     }
 
     .map-control-btn {
       background: white;
-      border: 1px solid rgba(0,0,0,0.2);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm);
+      border: none;
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
       cursor: pointer;
-      font-size: 1rem;
-      box-shadow: var(--shadow);
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
       transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--blue-dark);
     }
 
     .map-control-btn:hover {
+      background: var(--blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(10,61,107,0.35);
+    }
+
+    #btn-locate {
+      background: var(--blue);
+      color: white;
+    }
+
+    #btn-locate:hover {
+      background: var(--blue-dark);
+    }
+
+    #btn-reset {
+      background: white;
+      color: var(--blue-dark);
+    }
+
+    #btn-reset:hover {
       background: var(--blue-pale);
-      transform: scale(1.05);
     }
 
     /* Contenu sous la carte */
@@ -316,7 +345,7 @@
       <a href="medias.html">Médias</a>
       <a href="actualites.html">Actualités</a>
       <a href="galerie.html">Galerie</a>
-            <a href="communautes.html" class="active">Communautés</a>
+      <a href="communautes.html" class="active">Communautés</a>
       <a href="contact.html">Contact</a>
     </nav>
   </div>

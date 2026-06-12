@@ -597,87 +597,29 @@ form button[type="submit"] {
   }
 }
 
-/* Theme toggle (soleil / lune) */
+/* Dark mode toggle */
 .theme-toggle {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: linear-gradient(135deg, rgba(21,101,192,0.95) 0%, rgba(30,136,229,0.92) 100%);
-  color: var(--white);
+  border: none;
+  background: var(--blue-dark);
+  color: var(--gold-light);
   cursor: pointer;
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   z-index: 999;
-  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  font-size: 1.4rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: grid;
   place-items: center;
-  overflow: hidden;
-}
-
-.theme-toggle::before {
-  content: '';
-  position: absolute;
-  inset: -30px;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 55%);
-  pointer-events: none;
-  opacity: 0.9;
 }
 
 .theme-toggle:hover {
-  transform: scale(1.08);
-  filter: saturate(1.08);
-}
-
-.theme-toggle .icons {
-  position: relative;
-  width: 26px;
-  height: 26px;
-}
-
-/* Soleil */
-.theme-toggle .sun,
-.theme-toggle .moon {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transition: transform 0.35s var(--ease), opacity 0.35s var(--ease);
-  opacity: 0;
-}
-
-.theme-toggle .sun svg,
-.theme-toggle .moon svg {
-  width: 26px;
-  height: 26px;
-  fill: currentColor;
-}
-
-/* Quand thème light => afficher lune (et inverse) */
-:root[data-theme="light"] .theme-toggle .moon {
-  opacity: 1;
-  transform: translateY(0) rotate(0deg);
-}
-
-:root[data-theme="light"] .theme-toggle .sun {
-  opacity: 0;
-  transform: translateY(6px) scale(0.9);
-}
-
-:root[data-theme="dark"] .theme-toggle .sun {
-  opacity: 1;
-  transform: translateY(0) rotate(0deg);
-}
-
-:root[data-theme="dark"] .theme-toggle .moon {
-  opacity: 0;
-  transform: translateY(-6px) scale(0.9);
-}
-
-.theme-toggle .label-text {
-  display: none;
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
 }
 
 
